@@ -1,0 +1,71 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/tx      http://www.springframework.org/schema/tx/spring-tx.xsd
+         http://www.springframework.org/schema/mvc     http://www.springframework.org/schema/mvc/spring-mvc.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+  <!-- Component scan -->
+  <context:component-scan base-package="br.com.vemtambem"/>
+
+  <!-- Properties -->
+  <context:property-placeholder location="classpath:application.properties"/>
+
+  <!-- MVC -->
+  <mvc:annotation-driven/>
+
+  <mvc:interceptors>
+    <bean class="br.com.vemtambem.controller.AutorizadorInterceptor"/>
+    <!-- Se quiser mapear só algumas rotas, troque por <mvc:interceptor> com <mvc:mapping/> -->
+  </mvc:interceptors>
+
+  <!-- Recursos estáticos -->
+  <mvc:resources mapping="/resources/**" location="/resources/"/>
+
+  <!-- ViewResolver -->
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="prefix" value="/WEB-INF/pages/"/>
+    <property name="suffix" value=".jsp"/>
+  </bean>
+
+  <!-- DataSource -->
+  <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="${database.driver}"/>
+    <property name="url"             value="${database.url}"/>
+    <property name="username"        value="${database.user}"/>
+    <property name="password"        value="${database.password}"/>
+  </bean>
+
+  <!-- Hibernate 5 SessionFactory (ATUALIZAÇÃO AQUI) -->
+  <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+    <property name="dataSource" ref="dataSource"/>
+    <property name="packagesToScan" value="br.com.vemtambem.model"/>
+    <property name="hibernateProperties">
+      <props>
+        <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+        <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+        <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+        <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+        <!-- garante integração com @Transactional do Spring -->
+        <prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate5.SpringSessionContext</prop>
+      </props>
+    </property>
+  </bean>
+
+  <!-- Upload -->
+  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <property name="maxUploadSize" value="10485760"/>
+    <property name="maxInMemorySize" value="1048576"/>
+  </bean>
+
+  <!-- TransactionManager (ATUALIZAÇÃO AQUI) -->
+  <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+    <property name="sessionFactory" ref="sessionFactory"/>
+  </bean>
+
+  <tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>

@@ -1,0 +1,13 @@
+.git
+.gitignore
+.claude
+.agent
+.mvn
+.settings
+.tomcat
+target
+*.iml
+*.log
+README.md
+.classpath
+.project

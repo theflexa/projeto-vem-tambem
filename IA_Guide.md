@@ -25,10 +25,12 @@ src/
       dao/                 # Data Access Objects
         UsuarioDAO.java / UsuarioDAOImpl.java
         CicloDAO.java / CicloDAOImpl.java
+        TipoCicloDAO.java / TipoCicloDAOImpl.java
         UsuarioTokenDAO.java / UsuarioTokenDAOImpl.java
       model/               # Entidades JPA + Enums
         Usuario.java       # Entidade principal (usuario + no da arvore)
         Ciclo.java         # Ciclo de doacoes
+        TipoCiclo.java     # Tipos de ciclo (tabuleiros) com valores de doacao
         Conexao.java       # Credenciais JDBC hardcoded (ver "Problemas Conhecidos")
         Endereco.java
         UsuarioToken.java  # Token de redefinicao de senha
@@ -38,6 +40,7 @@ src/
         LoginService.java / LoginServiceImpl.java
         UsuarioService.java / UsuarioServiceImpl.java
         CicloService.java / CicloServiceImpl.java
+        TipoCicloService.java / TipoCicloServiceImpl.java
         UsuarioTokenService.java / UsuarioTokenServiceImpl.java
       utils/               # Utilitarios
         SenhaUtils.java           # Hash MD5 de senhas
@@ -50,10 +53,16 @@ src/
       WEB-INF/
         web.xml                   # Config do servlet (encoding, session timeout 5min, error pages)
         spring-servlet.xml        # Config do Spring (DataSource, Hibernate, interceptor, views)
+        includes/                 # JSP fragments reutilizaveis
+          sidebar.jsp             # Sidebar compartilhada com active state dinamico
         pages/                    # JSPs (ver secao "Paginas")
       resources/
-        css/                      # SB Admin 2 CSS
-        js/                       # Scripts customizados (masks.js, cadastro.js, sb-admin-2.min.js)
+        css/
+          sb-admin-2.min.css      # SB Admin 2 base
+          vt-theme.css            # Tema customizado VemTambem (source of truth para estilos)
+        js/
+          sb-admin-2.min.js       # SB Admin 2 JS
+          vt-toast.js             # Componente global de toast notifications
         img/                      # Logos
         vendor/                   # jQuery, Bootstrap 4, FontAwesome 5, Chart.js, DataTables, Inputmask
         arquivos/                 # Uploads de comprovantes de ativacao
@@ -63,6 +72,53 @@ src/
       application.properties      # Config do banco (Spring DataSource)
       application-docker.properties  # Config do banco para Docker
 ```
+
+---
+
+## Arquitetura Frontend
+
+### Design System (vt-theme.css)
+
+Todas as paginas autenticadas compartilham um unico arquivo de tema: `vt-theme.css`. Este e o **single source of truth** para estilos visuais. Nenhuma JSP deve ter blocos `<style>` inline duplicando estilos do tema (exceto CSS especifico de pagina como a arvore em `minha-rede.jsp`).
+
+**CSS Variables definidas:**
+```css
+--olive: #6f7a00;          /* Cor primaria da marca */
+--olive-700: #5a6300;      /* Variante escura */
+--gold: #d4a017;           /* Cor de destaque/acento */
+--ink: #1f2937;            /* Texto principal */
+--muted: #6b7280;          /* Texto secundario */
+--surface: #f8f9fa;        /* Fundo de superficie */
+```
+
+**Componentes CSS disponíveis:**
+- `.btn-olive` / `.btn-olive-outline` — Botoes da marca (substituem `btn-primary`/`btn-success`)
+- `.content-surface` — Header de pagina com fundo branco e sombra
+- `.progress-bar-brand` — Barra de progresso com gradiente olive→gold
+- `.badge-cycle` — Badge para nome do tabuleiro/ciclo
+- `.table-brand-stripe` — Tabela com zebra striping olive
+- `.icon-gold` / `.icon-olive` — Cores de icone utilitarias
+- `.text-success-brand` / `.text-warn-brand` — Texto com cores de status
+- `.empty-state` — Estado vazio centralizado com icone grande
+- `.vt-toast` — Toast notification (success/error/info/warning)
+- `.card-header .nav-tabs` — Abas coladas no header do card
+
+### Sidebar Compartilhada (sidebar.jsp)
+
+A sidebar e um JSP fragment em `WEB-INF/includes/sidebar.jsp`, incluido via `<jsp:include>` em todas as paginas autenticadas. Possui:
+- Active state dinamico via `fn:contains(uri, '/path')` pattern
+- Secao "Operacao" (links autenticados): Minha Rede, Meus Dados, Minha Contribuicao, Doadores
+- Secao "Atendimento": FAQ, Suporte (WhatsApp)
+- Secao "Admin" (condicional): Ativar Cadastrados
+- Condicional `<c:choose>` para usuario ativo vs inativo
+
+### Toast Notifications (vt-toast.js)
+
+Componente JS reutilizavel que substitui `alert()` nativo:
+```javascript
+vtToast('Mensagem', 'success');  // variantes: success, error, info, warning
+```
+Posicionado no topo-direita, auto-dismiss em 4s, com stacking vertical.
 
 ---
 
@@ -100,7 +156,7 @@ Funciona como **entidade de usuario E no da arvore binaria**.
 | dataCadastro | data_cadastro | LocalDateTime | Data de registro |
 | termoAceito | termo_aceito | boolean | Se aceitou os termos |
 
-**Campos transientes:** `codigoTipoChavePix` (int do form), `whatsappFormat` (computed: "55" + whatsapp).
+**Campos transientes:** `codigoTipoChavePix` (int do form), `whatsappFormat` (computed: "55" + whatsapp), `nomeCurto` (abreviacao do nome via NomeHelper).
 
 **Constante:** `ID_USUARIO_ADMIN = new Usuario(2L)` - indicador padrao quando nenhum e fornecido.
 
@@ -119,6 +175,33 @@ Cada ciclo e um snapshot da posicao do usuario na arvore.
 | indicadoPrincipal | indicado_principal_id | Usuario (FK) | No pai na arvore (para quem doar) |
 | indicadoEsquerda | indicado_esquerda_id | Usuario (FK) | Filho esquerdo no ciclo |
 | indicadoDireita | indicado_direita_id | Usuario (FK) | Filho direito no ciclo |
+
+### TipoCiclo (`tipo_ciclo`)
+
+Define os tipos de tabuleiro com seus valores monetarios. Introduzido para permitir multiplos niveis de doacao sem hardcode.
+
+| Campo | Coluna | Tipo | Descricao |
+|-------|--------|------|-----------|
+| id | id | Long | PK auto-gerada |
+| nome | nome | String | Ex: "Tabuleiro 1", "Tabuleiro 2" |
+| valorTI | valor_ti | BigDecimal | Valor da taxa de ativacao (T.I.) |
+| valorDoacao | valor_doacao | BigDecimal | Valor da doacao ao donatario |
+| quantDoadores | quant_doadores | int | Quantidade de doadores por ciclo |
+| ordem | ordem | int | Ordem de exibicao/progressao |
+| ativo | ativo | boolean | Se este tipo de ciclo esta ativo |
+
+**Valores tipicos no banco:**
+| nome | valorTI | valorDoacao | quantDoadores | ordem |
+|------|---------|-------------|---------------|-------|
+| Tabuleiro 1 | 10.00 | 90.00 | 8 | 1 |
+| Tabuleiro 2 | 50.00 | 450.00 | 8 | 2 |
+| Tabuleiro 3 | 100.00 | 900.00 | 8 | 3 |
+
+**DAO:** `TipoCicloDAO` / `TipoCicloDAOImpl` — metodos: `pesquisarPorId()`, `listarAtivos()`, `pesquisarPorOrdem()`, `salvar()`
+
+**Service:** `TipoCicloService` / `TipoCicloServiceImpl` — mesmos metodos expostos via interface
+
+**Uso nas JSPs:** O controller injeta `tipoCicloAtual` no model. As JSPs usam `${tipoCicloAtual.valorDoacao}`, `${tipoCicloAtual.valorTI}`, `${tipoCicloAtual.nome}` com fallback `<c:otherwise>` para valores hardcoded caso `tipoCicloAtual` seja null.
 
 ### UsuarioToken (`usuario_token`)
 
@@ -172,8 +255,8 @@ Campos: logradouro, complemento, bairro, municipio, estado, cep.
 ### Arvore Binaria
 - Cada usuario tem `indicadoEsquerda` e `indicadoDireita`
 - Insercao via BFS: percorre a arvore nivel a nivel, encontra o primeiro slot vazio (esquerda tem prioridade)
-- Os **doadores** de um usuario sao seus **netos** na arvore (nivel 2): esq.esq, esq.dir, dir.esq, dir.dir
-- A **rede** de um usuario mostra filhos diretos + netos (6 nos)
+- Os **doadores** de um usuario sao seus **bisnetos** na arvore (nivel 3): 8 combinacoes de esq/dir em 3 niveis
+- A **rede** de um usuario mostra filhos + netos + bisnetos (14 nos, todos os 3 niveis abaixo)
 
 ---
 
@@ -192,6 +275,7 @@ Campos: logradouro, complemento, bairro, municipio, estado, cep.
 |------|--------|-------------|-----------|
 | / | GET | Nao | Pagina de login |
 | /painel | GET | Sim | Dashboard principal |
+| /faq | GET | Sim | Perguntas frequentes |
 | /esqueci-senha | GET | Nao | Pagina de esqueci senha |
 | /enviar-codigo-senha | GET | Nao | Envia codigo de redefinicao por email |
 | /termo/download | GET | Nao | Download do PDF de termos |
@@ -236,6 +320,7 @@ Se nao autenticado, redireciona para `/vemtambem` (hardcoded).
 ### Sessao
 - `usuarioLogado` (objeto Usuario) e `idUsuarioLogado` (Long) sao setados no login
 - Timeout: 5 minutos (web.xml)
+- Modal de aviso de sessao expirando aparece com 1 minuto restante (painel.jsp)
 - Verificacao de admin: feita inline nos controllers (nao ha interceptor de role)
 
 ---
@@ -245,19 +330,25 @@ Se nao autenticado, redireciona para `/vemtambem` (hardcoded).
 | Arquivo | View Name | Descricao |
 |---------|-----------|-----------|
 | index.jsp | index | Login (acesso ao escritorio) |
-| painel.jsp | painel | Dashboard principal + upload comprovante ativacao |
+| painel.jsp | painel | Dashboard com gamificacao (ciclo, nivel, proximo passo) |
 | cadastro-form.jsp | cadastro-form | Formulario de registro (publico) |
-| doadores.jsp | doadores | Quem deve doar para mim + confirmacao |
-| donatarios.jsp | donatarios | Para quem devo doar + upload comprovante |
-| minha-rede.jsp | minha-rede | Visualizacao da arvore binaria |
-| pessoa-dados-pessoais.jsp | pessoa-dados-pessoais | Meus dados (edicao WhatsApp, celular, PIX) |
+| doadores.jsp | doadores | Tabela de 8 doadores com acoes (comprovante/ativar) |
+| donatarios.jsp | donatarios | Donatario por ciclo com upload de comprovante |
+| minha-rede.jsp | minha-rede | Arvore binaria visual (3 niveis) com tooltips |
+| pessoa-dados-pessoais.jsp | pessoa-dados-pessoais | Dados pessoais (edicao WhatsApp, celular, PIX) |
 | pessoa-lista-pendentes.jsp | pessoa-lista-pendentes | Admin: ativar cadastros pendentes |
-| recrutador.jsp | recrutador | Pagina de convite/indicacao (publica) |
+| faq.jsp | faq | Perguntas frequentes (accordion) |
+| recrutador.jsp | recrutador | Pagina de convite/indicacao (publica, standalone) |
+| onboarding.jsp | onboarding | Formulario de cadastro estilizado (publico, standalone) |
 | esqueci-senha.jsp | esqueci-senha | Redefinicao de senha |
 | suporte-form.jsp | suporte-form | Formulario de suporte |
 | error/403.jsp | error/403 | Erro de acesso negado |
 | error/404.jsp | error/404 | Pagina nao encontrada |
 | error/erro.jsp | error/erro | Erro generico |
+
+**Sidebar:** Todas as paginas autenticadas usam `<jsp:include page="/WEB-INF/includes/sidebar.jsp" />`.
+
+**Paginas standalone (sem sidebar):** `recrutador.jsp`, `onboarding.jsp`, `index.jsp`, `esqueci-senha.jsp`.
 
 Todas usam `${cp}` = `${pageContext.request.contextPath}` para montar URLs.
 
@@ -271,6 +362,7 @@ Todas usam `${cp}` = `${pageContext.request.contextPath}` para montar URLs.
 Usa `SessionFactory` injetado pelo Spring. Respeita `application.properties`.
 - `salvar()`, `pesquisarPorId()`, `pesquisarPorLogin()`, `pesquisarPorEmail()`, `pesquisarPorDocumento()`
 - Ciclo: `salvar()`, `pesquisarPorId()`, `pesquisarCiclosUsuarios()`, `getCicloAtivoPorLogin()`
+- TipoCiclo: `pesquisarPorId()`, `listarAtivos()`, `pesquisarPorOrdem()`, `salvar()`
 
 ### 2. JDBC puro (via Conexao.java)
 Usa `DriverManager.getConnection(Conexao.URL, Conexao.USUARIO, Conexao.SENHA)`. Credenciais hardcoded.
@@ -297,12 +389,13 @@ Usa `DriverManager.getConnection(Conexao.URL, Conexao.USUARIO, Conexao.SENHA)`. 
 - `Conexao.java`: URL = `jdbc:mysql://sergi6131.c44.integrator.host:3306/sergi6131_banco_dados_prod`
 - `application-docker.properties`: URL = mesma URL remota
 - O Dockerfile sobrescreve `application.properties` com `application-docker.properties` no build
+- Docker Compose: apenas o servico `app` (sem MySQL local — sempre usa banco remoto)
 - Acesso: `http://localhost:8080/vemtambem/`
 - Comandos:
   ```
-  docker compose up --build    # subir
+  docker compose up --build    # subir (com rebuild)
+  docker compose up -d         # subir em background
   docker compose down          # parar
-  docker compose down -v       # parar e apagar volume do MySQL
   ```
 
 ### Alternando entre ambientes
@@ -337,9 +430,10 @@ public static final String URL = "jdbc:mysql://sergi6131.c44.integrator.host:330
 3. **Credenciais SMTP hardcoded em EmailSender** - Senha do email esta no codigo. Ideal: usar variaveis de ambiente.
 4. **Metodos quebrados** - `pesquisarCiclos()` e `pesquisarUsuarios()` usam `"from Pessoa"` mas a entidade se chama `Usuario`.
 5. **Redirect hardcoded no interceptor** - `response.sendRedirect("/vemtambem")` nao funciona quando deployado como ROOT.
-6. **Session timeout curto** - 5 minutos pode ser inconveniente para usuarios.
+6. **Session timeout curto** - 5 minutos pode ser inconveniente para usuarios (modal de aviso implementado no painel).
 7. **Sem controle de acesso por role** - Verificacao de admin e inline nos controllers, nao ha interceptor especifico.
 8. **Upload de arquivos em resources/** - Arquivos ficam dentro do WAR, podem ser perdidos no redeploy.
+9. **Inconsistencia recuperarDoadores()** - O metodo `UsuarioServiceImpl.recuperarDoadores()` retorna 4 netos (nivel 2), mas a JSP `doadores.jsp` mostra 8 bisnetos (nivel 3). O metodo no service NAO e usado pela tela de doadores — pode ser codigo legado.
 
 ---
 
@@ -347,11 +441,14 @@ public static final String URL = "jdbc:mysql://sergi6131.c44.integrator.host:330
 
 ### Frontend (CSS, JS, imagens)
 - Editar em `src/main/webapp/resources/`
+- **CSS:** Editar `vt-theme.css` para mudancas de tema global. NUNCA duplicar estilos inline nas JSPs.
+- **Toast:** Usar `vtToast('mensagem', 'variante')` em vez de `alert()`.
 - No Docker: rebuild com `docker compose up --build`
 - No servidor: editar diretamente em `webapps/vemtambem/resources/` (efeito imediato)
 
 ### Layout das paginas (JSP)
 - Editar em `src/main/webapp/WEB-INF/pages/`
+- **Sidebar:** Editar `WEB-INF/includes/sidebar.jsp` (unico arquivo, reflete em todas as paginas)
 - No Docker: rebuild necessario
 - No servidor: editar diretamente em `webapps/vemtambem/WEB-INF/pages/` (Tomcat recompila automaticamente)
 

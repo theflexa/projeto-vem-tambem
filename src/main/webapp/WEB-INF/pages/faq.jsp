@@ -25,42 +25,7 @@
 
 <div id="wrapper">
   <!-- Sidebar -->
-  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/vemtambem/painel">
-      <div class="sidebar-brand-icon">
-        <img src="<c:url value='/resources/img/logo_vertical_2.png'/>" alt="Vem Também" style="height:85px">
-      </div>
-    </a>
-    <hr class="sidebar-divider my-0"/>
-    <li class="nav-item">
-      <a class="nav-link" href="/vemtambem/painel"><i class="fas fa-home"></i><span>Painel</span></a>
-    </li>
-    <hr class="sidebar-divider"/>
-    <div class="sidebar-heading">Operação</div>
-    <c:if test="${usuarioLogado != null && usuarioLogado.ativo}">
-      <li class="nav-item">
-        <a class="nav-link" href="/vemtambem/usuario/minha-rede"><i class="fas fa-network-wired"></i><span>Minha Rede</span></a>
-        <a class="nav-link" href="/vemtambem/usuario/dados-pessoais"><i class="fas fa-user"></i><span>Meus Dados</span></a>
-        <a class="nav-link" href="/vemtambem/usuario/donatarios"><i class="fas fa-hand-holding-heart"></i><span>Minha Contribuição</span></a>
-        <a class="nav-link" href="/vemtambem/usuario/doadores"><i class="fas fa-donate"></i><span>Doadores</span></a>
-        <a class="nav-link" href="/vemtambem/sair"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a>
-      </li>
-    </c:if>
-    <c:if test="${usuarioLogado == null || !usuarioLogado.ativo}">
-      <li class="nav-item">
-        <a class="nav-link" href="/vemtambem/sair"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a>
-      </li>
-    </c:if>
-    <hr class="sidebar-divider d-none d-md-block"/>
-    <div class="sidebar-heading">Atendimento</div>
-    <li class="nav-item active">
-      <a class="nav-link" href="/vemtambem/faq"><i class="fas fa-question-circle"></i><span>Perguntas Frequentes</span></a>
-      <a class="nav-link" href="https://wa.me/559184415184?text=Ol%C3%A1!%20Preciso%20de%20suporte%20na%20plataforma%20Vem%20Também" target="_blank"><i class="fas fa-headset"></i><span>Suporte</span></a>
-    </li>
-    <div class="text-center d-none d-md-inline">
-      <button class="rounded-circle border-0" id="sidebarToggle"></button>
-    </div>
-  </ul>
+  <jsp:include page="/WEB-INF/includes/sidebar.jsp" />
 
   <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
@@ -76,7 +41,7 @@
 
       <div class="container-fluid">
         <div class="content-surface mb-4">
-          <h1 class="h3 mb-0"><i class="fas fa-question-circle mr-2" style="color:var(--gold)"></i>Perguntas Frequentes</h1>
+          <h1 class="h3 mb-0"><i class="fas fa-question-circle mr-2 icon-gold"></i>Perguntas Frequentes</h1>
           <p class="mb-0">Tire suas dúvidas sobre a plataforma Vem Também.</p>
         </div>
 
@@ -212,7 +177,7 @@
 
     <footer class="sticky-footer">
       <div class="container my-auto">
-        <div class="copyright text-center my-auto text-white" style="opacity:.9">
+        <div class="copyright text-center my-auto">
           <span>&copy; Vem Também 2025-2026</span>
         </div>
       </div>
@@ -227,12 +192,5 @@
 <script type="text/javascript" src="<c:url value='/resources/vendor/bootstrap/js/bootstrap.bundle.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/vendor/jquery-easing/jquery.easing.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/js/sb-admin-2.min.js'/>"></script>
-
-<style>
-  /* Rotate chevron when expanded */
-  [data-toggle="collapse"]:not(.collapsed) .fa-chevron-down {
-    transform: rotate(180deg);
-  }
-</style>
 </body>
 </html>

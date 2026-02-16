@@ -13,150 +13,25 @@
   <title>Vem Também — Meus Dados</title>
   <link rel="icon" type="image/png" href="<c:url value='/resources/img/logo_vertical_2.png'/>"/>
 
-  <!-- Captura de paths/URL atual -->
-  <c:set var="cp"  value="${pageContext.request.contextPath}" />
-  <c:set var="uri" value="${requestScope['javax.servlet.forward.request_uri'] != null 
-                           ? requestScope['javax.servlet.forward.request_uri'] 
-                           : pageContext.request.requestURI}" />
-
   <!-- Fontes e ícones -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <spring:url value="/resources/vendor/fontawesome-free/css/all.min.css" var="allmincss" />
   <link href="${allmincss}" rel="stylesheet"/>
 
-  <!-- SB Admin 2 -->
+  <!-- SB Admin 2 + VT Theme -->
   <spring:url value="/resources/css/sb-admin-2.min.css" var="sbadmin2mincss" />
   <link href="${sbadmin2mincss}" rel="stylesheet"/>
   <spring:url value="/resources/css/vt-theme.css" var="vtthemecss" />
   <link href="${vtthemecss}" rel="stylesheet"/>
-
-  <!-- Tema VT (override) -->
-  <style>
-    :root{
-      --olive:#6f7a00; --olive-700:#5b6400; --gold:#f3c900; --gold-700:#d9b200;
-      --ink:#1f2937; --muted:#6b7280; --surface:#ffffff; --bg:#f7f7f5;
-      --radius:18px;
-    }
-    html,body{font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;}
-    body{
-      background: radial-gradient(1200px 800px at 15% 10%, #d9cc4a 0%, #b7ad1a 30%, #8e8a0a 55%, #6f7a00 85%);
-      min-height:100vh;
-    }
-
-    /* Sidebar */
-    .bg-gradient-primary{
-      background: linear-gradient(180deg, var(--olive) 0%, #8e8a0a 60%, var(--gold) 120%) !important;
-    }
-    .sidebar .nav-item .nav-link{border-radius:12px; margin:2px 8px; font-weight:600; letter-spacing:.1px;}
-    .sidebar .nav-item .nav-link i{opacity:.9; margin-right:.35rem;}
-    .sidebar .nav-item.active > .nav-link,
-    .sidebar .nav-item .nav-link.active, /* fallback se alguém marcar no <a> */
-    .sidebar .nav-item .nav-link:hover{background:rgba(255,255,255,.16);}
-    .sidebar .sidebar-brand{height:4.5rem}
-    .sidebar .sidebar-brand .sidebar-brand-icon{transform:translateY(2px);}
-
-    /* Topbar */
-    .topbar{border:0; border-bottom:1px solid rgba(0,0,0,.05)}
-    .topbar .navbar-nav .nav-link{font-weight:600; color:#4b5563}
-
-    /* Cards e botões */
-    .card,.alert,.modal-content{border:0; border-radius:var(--radius); box-shadow:0 6px 24px rgba(0,0,0,.08)}
-    .btn-olive{background:linear-gradient(90deg, var(--olive) 0%, var(--gold) 100%); border:0; color:#141a00; font-weight:700; border-radius:999px;}
-    .btn-olive:hover{filter:brightness(.95)}
-    .text-brand{color:var(--olive-700)}
-    .form-control:disabled, .form-control[readonly]{ background:#f4f5f7; color:#6b7280; opacity:1; }
-
-    /* Conteúdo */
-    #content-wrapper{background:transparent;}
-    .container-fluid{padding-left:1rem; padding-right:1rem}
-    .content-surface{
-      background:#ffffffd9; backdrop-filter:blur(6px); border-radius:var(--radius); padding:1.25rem;
-    }
-    .content-surface h1{color:var(--ink); font-weight:800}
-    .content-surface p{color:var(--muted)}
-    .section-title{font-weight:700; color:var(--ink); margin-bottom:.75rem}
-
-    @media (max-width:575.98px){
-      .content-surface{padding:.9rem}
-      .alert{padding:.9rem}
-    }
-  </style>
 </head>
 <body id="page-top">
 
+<c:set var="cp" value="${pageContext.request.contextPath}" />
+
 <div id="wrapper">
   <!-- Sidebar -->
-  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
-    <!-- Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="${cp}/painel">
-      <div class="sidebar-brand-icon">
-        <img src="<c:url value='/resources/img/logo_vertical_2.png'/>" alt="Vem Também" style="height:85px">
-      </div>
-    </a>
-
-    <hr class="sidebar-divider my-0"/>
-
-    <!-- Painel -->
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/painel')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/painel"><i class="fas fa-home"></i><span>Painel</span></a>
-    </li>
-
-    <hr class="sidebar-divider"/>
-
-    <div class="sidebar-heading">Operação</div>
-
-    <!-- Minha Rede -->
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/minha-rede')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/minha-rede"><i class="fas fa-network-wired"></i><span>Minha Rede</span></a>
-    </li>
-
-    <!-- Meus Dados -->
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/dados-pessoais')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/dados-pessoais"><i class="fas fa-user"></i><span>Meus Dados</span></a>
-    </li>
-
-    <!-- Minha Contribuição -->
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/donatarios')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/donatarios"><i class="fas fa-hand-holding-heart"></i><span>Minha Contribuição</span></a>
-    </li>
-
-    <!-- Doadores -->
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/doadores')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/doadores"><i class="fas fa-donate"></i><span>Doadores</span></a>
-    </li>
-
-    <!-- Sair -->
-    <li class="nav-item">
-      <a class="nav-link" href="${cp}/sair"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a>
-    </li>
-
-    <hr class="sidebar-divider d-none d-md-block"/>
-
-    <div class="sidebar-heading">Atendimento</div>
-
-    <!-- Atendimento -->
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/suporte')) ? 'active' : ''}">
-      <a class="nav-link" href="/vemtambem/faq"><i class="fas fa-question-circle"></i><span>Perguntas Frequentes</span></a>
-      <a class="nav-link" href="https://wa.me/559184415184?text=Ol%C3%A1!%20Preciso%20de%20suporte%20na%20plataforma%20Vem%20Também" target="_blank"><i class="fas fa-headset"></i><span>Suporte</span></a>
-    </li>
-
-    <!-- Admin -->
-    <c:if test="${usuarioLogado.admin}">
-      <hr class="sidebar-divider d-none d-md-block"/>
-      <div class="sidebar-heading">Admin</div>
-      <li class="nav-item ${fn:startsWith(uri, cp.concat('/admin/listar-pendentes')) ? 'active' : ''}">
-        <a class="nav-link" href="${cp}/admin/listar-pendentes"><i class="fas fa-user-check"></i><span>Ativar Cadastrados</span></a>
-      </li>
-    </c:if>
-
-    <!-- Toggler -->
-    <div class="text-center d-none d-md-inline">
-      <button class="rounded-circle border-0" id="sidebarToggle" aria-label="Alternar menu"></button>
-    </div>
-  </ul>
-  <!-- /Sidebar -->
+  <jsp:include page="/WEB-INF/includes/sidebar.jsp" />
 
   <!-- Content Wrapper -->
   <div id="content-wrapper" class="d-flex flex-column">
@@ -175,7 +50,6 @@
           </li>
         </ul>
       </nav>
-      <!-- /Topbar -->
 
       <!-- Conteúdo -->
       <div class="container-fluid">
@@ -299,10 +173,10 @@
     </div><!-- /content -->
 
     <!-- Footer -->
-    <footer class="sticky-footer bg-white">
+    <footer class="sticky-footer">
       <div class="container my-auto">
         <div class="copyright text-center my-auto">
-          <span>© Vem Também 2025-2026</span>
+          <span>&copy; Vem Também 2025-2026</span>
         </div>
       </div>
     </footer>
@@ -337,17 +211,18 @@
 
 <!-- Inputmask -->
 <script type="text/javascript" src="<c:url value='/resources/vendor/inputmask/min/jquery.inputmask.bundle.min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-toast.js'/>"></script>
 
 <script type="text/javascript">
   // máscaras
   $('[data-mask]').inputmask();
 
-  // copiar URL
+  // copiar URL — using toast instead of alert()
   function copyUrlToClipboard() {
     var url = document.getElementById("url").value;
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(url).then(function(){
-        alert("URL copiada para a área de transferência!");
+        vtToast("URL copiada!", "success");
       }, function(){
         fallbackCopy();
       });
@@ -360,7 +235,7 @@
     field.removeAttribute('readonly'); field.select(); field.setSelectionRange(0, 99999);
     document.execCommand("copy");
     field.setAttribute('readonly', 'readonly');
-    alert("URL copiada para a área de transferência!");
+    vtToast("URL copiada!", "success");
   }
 </script>
 </body>

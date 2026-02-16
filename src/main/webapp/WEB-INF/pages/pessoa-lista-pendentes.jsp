@@ -12,19 +12,13 @@
   <title>Vem Também — Ativar Cadastros</title>
   <link rel="icon" type="image/png" href="<c:url value='/resources/img/logo_vertical_2.png'/>"/>
 
-  <!-- Paths -->
-  <c:set var="cp"  value="${pageContext.request.contextPath}" />
-  <c:set var="uri" value="${requestScope['javax.servlet.forward.request_uri'] != null 
-                           ? requestScope['javax.servlet.forward.request_uri'] 
-                           : pageContext.request.requestURI}" />
-
   <!-- Fontes / ícones -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
   <spring:url value="/resources/vendor/fontawesome-free/css/all.min.css" var="allmincss" />
   <link href="${allmincss}" rel="stylesheet"/>
 
-  <!-- SB Admin 2 -->
+  <!-- SB Admin 2 + VT Theme -->
   <spring:url value="/resources/css/sb-admin-2.min.css" var="sbadmin2mincss" />
   <link href="${sbadmin2mincss}" rel="stylesheet"/>
   <spring:url value="/resources/css/vt-theme.css" var="vtthemecss" />
@@ -33,98 +27,14 @@
   <!-- DataTables -->
   <spring:url value="/resources/vendor/datatables/dataTables.bootstrap4.min.css" var="dtcss" />
   <link href="${dtcss}" rel="stylesheet"/>
-
-  <style>
-    :root{ --olive:#6f7a00; --gold:#f3c900; --ink:#1f2937; --muted:#6b7280; --radius:18px; }
-    html,body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif;}
-    body{
-      background: radial-gradient(1200px 800px at 15% 10%, #d9cc4a 0%, #b7ad1a 30%, #8e8a0a 55%, #6f7a00 85%);
-      min-height:100vh;
-    }
-
-    /* Sidebar */
-    .bg-gradient-primary{ background: linear-gradient(180deg, var(--olive) 0%, #8e8a0a 60%, var(--gold) 120%) !important; }
-    .sidebar .nav-item .nav-link{border-radius:12px; margin:2px 8px; font-weight:600;}
-    .sidebar .nav-item.active>.nav-link,
-    .sidebar .nav-item .nav-link.active,
-    .sidebar .nav-item .nav-link:hover{background:rgba(255,255,255,.16);}
-    .sidebar .sidebar-brand{height:4.5rem}
-
-    /* Topbar */
-    .topbar{border:0; border-bottom:1px solid rgba(0,0,0,.05)}
-    .topbar .navbar-nav .nav-link{font-weight:600; color:#4b5563}
-
-    /* Cards/botões */
-    .card,.alert,.modal-content{border:0; border-radius:var(--radius); box-shadow:0 6px 24px rgba(0,0,0,.08)}
-    .btn-olive{background:linear-gradient(90deg, var(--olive) 0%, var(--gold) 100%); border:0; color:#141a00; font-weight:700; border-radius:999px;}
-    .btn-olive:hover{filter:brightness(.95)}
-    .text-brand{color:#5b6400}
-
-    /* Cabeçalho da página */
-    .content-surface{ background:#ffffffd9; backdrop-filter:blur(6px); border-radius:var(--radius); padding:1rem 1.25rem; }
-    .content-surface h1{color:var(--ink); font-weight:800; margin-bottom:.25rem}
-    .content-surface p{color:#6b7280; margin-bottom:0}
-
-    /* Tabela */
-    .table thead th{border-top:0; color:#4b5563; font-weight:800; text-transform:uppercase; font-size:.78rem; letter-spacing:.02em;}
-    .table td, .table th{vertical-align:middle}
-    .wa i{margin-left:.25rem}
-  </style>
 </head>
 <body id="page-top">
 
+<c:set var="cp" value="${pageContext.request.contextPath}" />
+
 <div id="wrapper">
   <!-- Sidebar -->
-  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="${cp}/painel">
-      <div class="sidebar-brand-icon">
-        <img src="<c:url value='/resources/img/logo_vertical_2.png'/>" alt="Vem Também" style="height:85px">
-      </div>
-    </a>
-
-    <hr class="sidebar-divider my-0"/>
-
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/painel')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/painel"><i class="fas fa-home"></i><span>Painel</span></a>
-    </li>
-
-    <hr class="sidebar-divider"/>
-    <div class="sidebar-heading">Operação</div>
-
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/minha-rede')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/minha-rede"><i class="fas fa-network-wired"></i><span>Minha Rede</span></a>
-    </li>
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/dados-pessoais')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/dados-pessoais"><i class="fas fa-user"></i><span>Meus Dados</span></a>
-    </li>
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/donatarios')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/donatarios"><i class="fas fa-hand-holding-heart"></i><span>Minha Contribuição</span></a>
-    </li>
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/doadores')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/doadores"><i class="fas fa-donate"></i><span>Doadores</span></a>
-    </li>
-    <li class="nav-item"><a class="nav-link" href="${cp}/sair"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a></li>
-
-    <hr class="sidebar-divider d-none d-md-block"/>
-    <div class="sidebar-heading">Atendimento</div>
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/suporte')) ? 'active' : ''}">
-      <a class="nav-link" href="/vemtambem/faq"><i class="fas fa-question-circle"></i><span>Perguntas Frequentes</span></a>
-      <a class="nav-link" href="https://wa.me/559184415184?text=Ol%C3%A1!%20Preciso%20de%20suporte%20na%20plataforma%20Vem%20Também" target="_blank"><i class="fas fa-headset"></i><span>Suporte</span></a>
-    </li>
-
-    <c:if test="${usuarioLogado.admin}">
-      <hr class="sidebar-divider d-none d-md-block"/>
-      <div class="sidebar-heading">Admin</div>
-      <li class="nav-item ${fn:startsWith(uri, cp.concat('/admin/listar-pendentes')) ? 'active' : ''}">
-        <a class="nav-link" href="${cp}/admin/listar-pendentes"><i class="fas fa-user-check"></i><span>Ativar Cadastrados</span></a>
-      </li>
-    </c:if>
-
-    <div class="text-center d-none d-md-inline">
-      <button class="rounded-circle border-0" id="sidebarToggle" aria-label="Alternar menu"></button>
-    </div>
-  </ul>
-  <!-- /Sidebar -->
+  <jsp:include page="/WEB-INF/includes/sidebar.jsp" />
 
   <!-- Content -->
   <div id="content-wrapper" class="d-flex flex-column">
@@ -163,7 +73,7 @@
 
           <div class="card-body">
             <div class="table-responsive">
-              <table id="tabela" class="table table-bordered" width="100%" cellspacing="0">
+              <table id="tabela" class="table table-bordered table-brand-stripe" width="100%" cellspacing="0">
                 <thead>
                   <tr>
                     <th>Nome</th>
@@ -183,11 +93,11 @@
                         </a>
                       </td>
                       <td>
-                        <button class="btn btn-primary btn-sm"
+                        <button class="btn btn-olive-outline btn-sm"
                                 onclick="downloadComprovante(${pessoa.id})">
                           Comprovante
                         </button>
-                        <button id="btnAtivar-${pessoa.id}" class="btn btn-success btn-sm"
+                        <button id="btnAtivar-${pessoa.id}" class="btn btn-olive btn-sm"
                                 onclick="ativarPessoa(${pessoa.id})">
                           Ativar
                         </button>
@@ -203,10 +113,10 @@
       </div><!-- /container-fluid -->
     </div><!-- /content -->
 
-    <footer class="sticky-footer bg-white">
+    <footer class="sticky-footer">
       <div class="container my-auto">
         <div class="copyright text-center my-auto">
-          <span>© Vem Também 2025-2026</span>
+          <span>&copy; Vem Também 2025-2026</span>
         </div>
       </div>
     </footer>
@@ -242,6 +152,7 @@
 <!-- DataTables -->
 <script type="text/javascript" src="<c:url value='/resources/vendor/datatables/jquery.dataTables.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/vendor/datatables/dataTables.bootstrap4.min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-toast.js'/>"></script>
 
 <script type="text/javascript">
   $(function () {
@@ -262,19 +173,17 @@
         "oPaginate": {"sNext": "Próximo","sPrevious": "Anterior","sFirst": "Primeiro","sLast": "Último"},
         "oAria": {"sSortAscending": ": Ordenar colunas de forma ascendente","sSortDescending": ": Ordenar colunas de forma descendente"}
       },
-      order: [] // sem ordenação inicial
+      order: []
     });
   });
 
   function downloadComprovante(pessoaId){
-    // ajuste de rota com contextPath
     window.location.href = '${cp}/usuario/comprovante/download/' + pessoaId;
   }
 
   function ativarPessoa(pessoaId){
     var btn = document.getElementById('btnAtivar-' + pessoaId);
     if(btn){ btn.disabled = true; btn.innerText = 'Ativando...'; }
-    // ajuste de rota com contextPath
     window.location.href = '${cp}/admin/ativar?id=' + pessoaId;
   }
 </script>

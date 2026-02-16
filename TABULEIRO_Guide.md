@@ -7,6 +7,7 @@ O tabuleiro e o modelo de rede de doacoes do sistema. Ele define:
 - Quem doa para quem
 - Quando um ciclo e considerado completo
 - O que acontece apos completar um ciclo
+- **Quanto cada participante doa** (via entidade `TipoCiclo`)
 
 O tabuleiro atual e baseado em uma **arvore binaria de 4 niveis**.
 
@@ -42,20 +43,34 @@ O tabuleiro atual e baseado em uma **arvore binaria de 4 niveis**.
 | Quantidade de doadores por ciclo | 8 (2^3) |
 | Total de pessoas na arvore | 15 (2^4 - 1) |
 | Condicao de ciclo completo | `quantDoacoesRecebidas >= 8` |
-| Valor da doacao | Nao definido no codigo (combinado fora do sistema) |
+
+### Valores de Doacao (TipoCiclo)
+
+Os valores sao definidos pela entidade `TipoCiclo` no banco de dados:
+
+| Tabuleiro | Valor T.I. (ativacao) | Valor Doacao | Total pago pelo participante |
+|-----------|-----------------------|--------------|------------------------------|
+| Tabuleiro 1 | R$ 10,00 | R$ 90,00 | R$ 100,00 |
+| Tabuleiro 2 | R$ 50,00 | R$ 450,00 | R$ 500,00 |
+| Tabuleiro 3 | R$ 100,00 | R$ 900,00 | R$ 1.000,00 |
+
+**T.I. (Taxa de Investimento):** Doacao de ativacao paga ao sistema para manutencao.
+**Doacao:** Valor pago diretamente ao donatario (pessoa acima na arvore).
 
 ### Como funciona na pratica
 
 1. **Voce entra na rede** e e posicionado na arvore do seu indicador
 2. **Voce identifica seu donatario** (a pessoa ACIMA de voce na arvore, o `indicadoPrincipal` do seu ciclo)
-3. **Voce doa** para essa pessoa e sobe comprovante
-4. **A medida que pessoas entram abaixo de voce**, a arvore vai enchendo:
+3. **Voce paga a T.I.** (R$ 10,00 no Tabuleiro 1) e envia comprovante
+4. **Admin ativa sua conta** apos verificar o comprovante
+5. **Voce doa** o valor principal (R$ 90,00 no Tabuleiro 1) para o donatario e sobe comprovante
+6. **A medida que pessoas entram abaixo de voce**, a arvore vai enchendo:
    - Primeiro nivel 1 (2 indicados diretos)
    - Depois nivel 2 (4 netos)
    - Depois nivel 3 (8 bisnetos — seus doadores)
-5. **Cada bisneto doa para voce** quando entra
-6. **Quando voce recebe 8 doacoes**, seu ciclo esta completo
-7. **Voce pode "reativar"** — entra na rede novamente como um novo participante
+7. **Cada bisneto doa para voce** quando entra
+8. **Quando voce recebe 8 doacoes**, seu ciclo esta completo
+9. **Voce pode "reativar"** — entra na rede novamente, potencialmente no proximo tabuleiro com valores maiores
 
 ---
 
@@ -86,17 +101,48 @@ if (pessoaAtual.getIndicadoEsquerda() == null) {
 
 **Para mudar:** Para arvore ternaria (3 filhos), seria necessario adicionar um campo `indicadoCentro` (ou similar) e alterar o BFS.
 
-#### 2. Quantidade de doadores (8) e condicao de ciclo completo
+#### 2. Valores de doacao (TipoCiclo)
 
-Definido em `UsuarioController.java` (linha 99):
+Definidos pela entidade `TipoCiclo` no banco de dados:
+```java
+@Entity
+@Table(name = "tipo_ciclo")
+public class TipoCiclo {
+    private Long id;
+    private String nome;           // "Tabuleiro 1", "Tabuleiro 2", etc.
+    private BigDecimal valorTI;    // Valor da taxa de ativacao
+    private BigDecimal valorDoacao; // Valor da doacao ao donatario
+    private int quantDoadores;     // Quantidade de doadores por ciclo
+    private int ordem;             // Ordem de progressao
+    private boolean ativo;         // Se este tabuleiro esta ativo
+}
+```
+
+O controller (`HomeController`, `UsuarioController`) injeta `tipoCicloAtual` no model. As JSPs exibem valores dinamicos com fallback:
+```jsp
+<c:choose>
+  <c:when test="${tipoCicloAtual != null}">R$ ${tipoCicloAtual.valorDoacao}</c:when>
+  <c:otherwise>R$ 90,00</c:otherwise>
+</c:choose>
+```
+
+**Para mudar valores:** Atualizar os registros na tabela `tipo_ciclo` no banco. Nenhuma mudanca de codigo necessaria.
+
+**Para adicionar novo tabuleiro:** Inserir novo registro no banco com `ordem` sequencial e `ativo=true`.
+
+#### 3. Quantidade de doadores (8) e condicao de ciclo completo
+
+Definido em `UsuarioController.java`:
 ```java
 if (usuario.getQuantDoacoesRecebidas() >= 8)
     isCicloFinalizado = true;
 ```
 
-**Para mudar:** Alterar o `8` para o novo numero. Idealmente extrair para uma constante ou configuracao.
+Tambem definido em `TipoCiclo.quantDoadores` para referencia, mas a validacao real usa o hardcode `>= 8`.
 
-#### 3. Nivel dos doadores (bisnetos = nivel 3)
+**Para mudar:** Alterar o `8` para `tipoCicloAtual.getQuantDoadores()` para tornar dinamico. Idealmente usar o valor do TipoCiclo.
+
+#### 4. Nivel dos doadores (bisnetos = nivel 3)
 
 Definido na JSP `doadores.jsp`. Cada linha da tabela acessa 3 niveis de profundidade a partir do ciclo:
 
@@ -115,22 +161,16 @@ Isso gera todas as 8 combinacoes de esquerda/direita em 3 niveis (2^3 = 8).
 
 **Para mudar:** Se alterar para 2 niveis, seriam 4 doadores (netos). Se alterar para 4 niveis, seriam 16 doadores (tataranetos). A JSP precisaria ser reescrita.
 
-#### 4. Rede visivel (tela "Minha Rede")
+#### 5. Rede visivel (tela "Minha Rede")
 
-`UsuarioServiceImpl.recuperarRede()` retorna nivel 1 + nivel 2 (filhos + netos = 6 pessoas):
+`minha-rede.jsp` renderiza uma arvore visual HTML/CSS mostrando todos os 3 niveis (filhos + netos + bisnetos = 14 nos). Cada no exibe:
+- Badge de nivel colorido (l0=verde, l1=azul, l2=amarelo, l3=roxo)
+- Nome abreviado (`nomeCurto`)
+- Tooltip com nome completo, contato e documento
 
-```java
-// Filhos (nivel 1)
-rede.add(usuario.getIndicadoEsquerda());
-rede.add(usuario.getIndicadoDireita());
-// Netos (nivel 2)
-rede.add(usuario.getIndicadoEsquerda().getIndicadoEsquerda());
-rede.add(usuario.getIndicadoEsquerda().getIndicadoDireita());
-rede.add(usuario.getIndicadoDireita().getIndicadoEsquerda());
-rede.add(usuario.getIndicadoDireita().getIndicadoDireita());
-```
+Empty state e exibido quando o usuario nao tem indicados ainda.
 
-#### 5. Doadores retornados pelo service (usado internamente)
+#### 6. Doadores retornados pelo service (usado internamente)
 
 `UsuarioServiceImpl.recuperarDoadores()` retorna nivel 2 (netos = 4 pessoas):
 
@@ -163,6 +203,22 @@ Ciclo:
 
 A partir de `indicadoEsquerda` e `indicadoDireita`, o sistema navega recursivamente via Hibernate lazy loading ate o nivel 3 para encontrar os 8 doadores.
 
+### Entidade TipoCiclo (`tipo_ciclo`)
+
+Define a "categoria" do tabuleiro (valores, nome):
+
+```
+TipoCiclo:
+  - nome:            "Tabuleiro 1", "Tabuleiro 2", etc.
+  - valorTI:         Valor da taxa de ativacao (BigDecimal)
+  - valorDoacao:     Valor da doacao ao donatario (BigDecimal)
+  - quantDoadores:   Quantidade de doadores esperados no ciclo
+  - ordem:           Sequencia de progressao (1, 2, 3...)
+  - ativo:           Se este tipo de ciclo esta disponivel
+```
+
+O `tipoCicloAtual` e injetado pelo controller com base no ciclo ativo do usuario.
+
 ### Fluxo de Ativacao
 
 Quando o admin ativa um usuario (`UsuarioServiceImpl.ativar()`):
@@ -194,6 +250,35 @@ Quando um usuario completa 8 doacoes e clica "Continuar" (`UsuarioServiceImpl.re
 
 ---
 
+## Gamificacao no Painel
+
+O dashboard (`painel.jsp`) exibe 3 cards de gamificacao para usuarios ativos:
+
+### Card "Meu Ciclo"
+- Barra de progresso (0-8 doacoes) com gradiente olive→gold
+- Nome do tabuleiro via `${tipoCicloAtual.nome}` (fallback: "Tabuleiro 1")
+- Mensagens contextuais:
+  - 0 doacoes: "Convide pessoas — seu primeiro indicado e o passo mais importante"
+  - 1-3 doacoes: "Ja recebeu X — continue compartilhando"
+  - 4-7 doacoes: "X de 8 — sua rede esta crescendo"
+  - 8+ doacoes: "Parabens! Ciclo completo. Hora do proximo nivel."
+
+### Card "Nivel"
+- Avatar com icone e gradiente por nivel:
+  - 0 ciclos: Iniciante (verde, seedling)
+  - 1 ciclo: Colaborador (azul, medal)
+  - 2 ciclos: Veterano (roxo, gem)
+  - 3+ ciclos: Mestre (dourado, crown)
+- Link "Ver Rede"
+
+### Card "Proximo Passo"
+- CTA dinamico baseado no estado do usuario:
+  - Doacao nao feita → "Minha Contribuicao"
+  - Doacao feita, ciclo em andamento → "Ver Doadores"
+  - Ciclo completo → "Reativar para o proximo nivel"
+
+---
+
 ## Para Criar um Novo Tabuleiro
 
 ### O que precisa mudar (checklist)
@@ -204,10 +289,11 @@ Se voce quiser alterar o tabuleiro (ex: mudar de 8 para 4 doadores, ou de binari
 
 | Arquivo | O que mudar |
 |---------|-------------|
-| `UsuarioController.java` | Alterar `>= 8` para `>= 4` na verificacao de ciclo completo |
+| `UsuarioController.java` | Alterar `>= 8` para `>= 4` (ou usar `tipoCicloAtual.getQuantDoadores()`) |
 | `doadores.jsp` | Reescrever a tabela para mostrar 4 linhas (nivel 2) em vez de 8 (nivel 3) |
-| `UsuarioServiceImpl.recuperarDoadores()` | Ajustar para o novo nivel (ja esta em nivel 2 atualmente) |
-| `UsuarioServiceImpl.recuperarRede()` | Ajustar para mostrar a quantidade correta de niveis |
+| `minha-rede.jsp` | Ajustar arvore visual para o novo numero de niveis |
+| `UsuarioServiceImpl.recuperarDoadores()` | Ajustar para o novo nivel |
+| `tipo_ciclo` (banco) | Atualizar `quant_doadores` para 4 |
 
 #### Mudanca de TIPO DE ARVORE (ex: de binaria para ternaria = 3 filhos)
 
@@ -220,23 +306,26 @@ Se voce quiser alterar o tabuleiro (ex: mudar de 8 para 4 doadores, ou de binari
 | `UsuarioServiceImpl.inserirIndicado()` | Alterar BFS para verificar esquerda -> centro -> direita |
 | `UsuarioServiceImpl.ativar()` | Atualizar logica do ciclo para incluir centro |
 | `UsuarioServiceImpl.recuperarDoadores()` | Recalcular niveis (ternaria nivel 2 = 9 doadores) |
-| `UsuarioServiceImpl.recuperarRede()` | Incluir filhos centrais |
 | `doadores.jsp` | Reescrever tabela para 3^N linhas |
-| `minha-rede.jsp` | Redesenhar visualizacao da arvore |
+| `minha-rede.jsp` | Redesenhar visualizacao da arvore (3 galhos por no) |
 | `UsuarioController.java` | Alterar threshold de ciclo completo |
+| `tipo_ciclo` (banco) | Atualizar `quant_doadores` |
 
 #### Mudanca de VALOR de doacao
 
-O valor da doacao NAO e definido no codigo. Nao existe campo de valor monetario em nenhuma entidade. O valor e combinado externamente (WhatsApp, regras do grupo, etc.). Para adicionar controle de valor no sistema:
+| Local | O que fazer |
+|-------|-------------|
+| Banco de dados | Atualizar `valor_ti` e `valor_doacao` nos registros de `tipo_ciclo` |
+| Nenhum codigo | Os valores sao lidos dinamicamente do banco via `TipoCiclo` |
 
-| Arquivo | O que adicionar |
-|---------|-----------------|
-| `Ciclo.java` ou nova entidade | Campo `valorDoacao` (BigDecimal) |
-| `Usuario.java` ou nova entidade | Campo para registrar valor pago/recebido |
-| Banco de dados | Novas colunas ou tabela de transacoes |
-| `donatarios.jsp` | Exibir valor a pagar |
-| `doadores.jsp` | Exibir valor recebido |
-| `UsuarioController.java` | Logica de validacao de valores |
+**Nota:** Se `tipoCicloAtual` for null (usuario sem ciclo associado), as JSPs usam valores hardcoded como fallback (R$ 10,00 / R$ 90,00). Para evitar isso, garanta que todo usuario tenha um `tipoCicloAtual` definido.
+
+#### Adicionar novo nivel de tabuleiro
+
+| Local | O que fazer |
+|-------|-------------|
+| Banco de dados | `INSERT INTO tipo_ciclo (nome, valor_ti, valor_doacao, quant_doadores, ordem, ativo) VALUES ('Tabuleiro 4', 200.00, 1800.00, 8, 4, true)` |
+| Controller | Garantir que a logica de reativacao associe o usuario ao proximo `TipoCiclo` por ordem |
 
 ---
 
@@ -257,12 +346,12 @@ Formula: doadores = filhos^nivel_doadores. Total na arvore = (filhos^(niveis+1) 
 
 ## Resumo Tecnico para Prompts
 
-Ao criar um prompt para gerar novos tabuleiros, forneça:
+Ao criar um prompt para gerar novos tabuleiros, forneca:
 
 1. **Tipo de arvore:** Binaria (2 filhos), ternaria (3), quaternaria (4)
 2. **Nivel dos doadores:** Em que nivel da arvore estao as pessoas que doam para voce
 3. **Quantidade de doadores por ciclo:** filhos^nivel (8 no atual)
-4. **Valor da doacao:** Se deseja que o sistema controle valores
+4. **Valores de doacao:** Definidos na tabela `tipo_ciclo` (valorTI + valorDoacao por tabuleiro)
 5. **Regras de reativacao:** O que acontece quando o ciclo completa
 6. **Regras de insercao:** BFS (preenche nivel a nivel) ou outra estrategia
 
@@ -277,6 +366,7 @@ TABULEIRO ATUAL:
 - Doadores no nivel 3 (bisnetos)
 - 8 doadores por ciclo
 - Condicao de fim: quantDoacoesRecebidas >= 8
+- Valores definidos na tabela tipo_ciclo (Tabuleiro 1: TI=R$10, Doacao=R$90)
 
 NOVO TABULEIRO:
 - [Tipo de arvore]
@@ -284,12 +374,13 @@ NOVO TABULEIRO:
 - [Nivel dos doadores]
 - [Doadores por ciclo]
 - [Condicao de fim]
-- [Valor da doacao se aplicavel]
+- [Valores de doacao por nivel]
 
 Arquivos que precisam ser alterados:
 - Usuario.java (entidade - campos de filhos)
 - Ciclo.java (entidade - campos de filhos do ciclo)
-- UsuarioServiceImpl.java (logica de insercao BFS, ativacao, reativacao, recuperarDoadores, recuperarRede)
+- TipoCiclo (banco - valores de doacao, quantDoadores)
+- UsuarioServiceImpl.java (logica de insercao BFS, ativacao, reativacao, recuperarDoadores)
 - UsuarioController.java (condicao de ciclo completo: >= N)
 - doadores.jsp (tabela com N linhas de doadores)
 - minha-rede.jsp (visualizacao da arvore)

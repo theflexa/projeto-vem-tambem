@@ -13,10 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.vemtambem.dao.CicloDAO;
+import br.com.vemtambem.dao.TipoCicloDAO;
 import br.com.vemtambem.dao.UsuarioDAO;
 import br.com.vemtambem.dao.UsuarioTokenDAO;
 import br.com.vemtambem.model.Ciclo;
 import br.com.vemtambem.model.TipoChavePix;
+import br.com.vemtambem.model.TipoCiclo;
 import br.com.vemtambem.model.Usuario;
 import br.com.vemtambem.model.UsuarioToken;
 import br.com.vemtambem.utils.EmailSender;
@@ -30,7 +32,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Autowired
 	private CicloDAO cicloDAO;
-	
+
+	@Autowired
+	private TipoCicloDAO tipoCicloDAO;
+
 	@Autowired
 	private UsuarioTokenDAO usuarioTokenDAO;
 
@@ -212,6 +217,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 		ciclo.setUsuario(usuario);
 		ciclo.setIndicadoPrincipal(indicadorDireto);
 		ciclo.setLogin(usuario.getLogin());
+
+		// Associar o primeiro TipoCiclo ativo (ordem 1)
+		TipoCiclo tipoCiclo = tipoCicloDAO.pesquisarPorOrdem(1);
+		if (tipoCiclo != null) {
+			ciclo.setTipoCiclo(tipoCiclo);
+		}
+
 		cicloDAO.salvar(ciclo);
 
 		usuario.setCicloAtivo(ciclo);

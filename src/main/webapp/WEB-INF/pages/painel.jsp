@@ -136,10 +136,10 @@
     <c:choose>
       <c:when test="${usuarioLogado.ativo}">
         <li class="nav-item">
-          <a class="nav-link" href="/vemtambem/usuario/dados-pessoais"><i class="fas fa-user"></i><span>Meus Dados</span></a>
-          <a class="nav-link" href="/vemtambem/usuario/donatarios"><i class="fas fa-hands-helping"></i><span>Donatários</span></a>
-          <a class="nav-link" href="/vemtambem/usuario/doadores"><i class="fas fa-donate"></i><span>Doadores</span></a>
           <a class="nav-link" href="/vemtambem/usuario/minha-rede"><i class="fas fa-network-wired"></i><span>Minha Rede</span></a>
+          <a class="nav-link" href="/vemtambem/usuario/dados-pessoais"><i class="fas fa-user"></i><span>Meus Dados</span></a>
+          <a class="nav-link" href="/vemtambem/usuario/donatarios"><i class="fas fa-hand-holding-heart"></i><span>Minha Contribuição</span></a>
+          <a class="nav-link" href="/vemtambem/usuario/doadores"><i class="fas fa-donate"></i><span>Doadores</span></a>
           <a class="nav-link" href="/vemtambem/sair"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a>
         </li>
       </c:when>
@@ -210,7 +210,7 @@
               <button type="button" class="close" data-dismiss="alert" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-              <strong>Dica:</strong> Após a ativação, acesse <b>Donatário</b> e realize a doação de R$ 260,00 para liberar a conta.
+              <strong>Dica:</strong> Após a ativação, acesse <b>Minha Contribuição</b> e realize a doação de R$ <c:choose><c:when test="${tipoCicloAtual != null}">${tipoCicloAtual.valorDoacao}</c:when><c:otherwise>90,00</c:otherwise></c:choose> para liberar a conta.
               <button type="button" class="close" data-dismiss="alert" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
             </div>
           </c:if>
@@ -226,13 +226,13 @@
           <div class="card mb-4">
             <div class="card-body">
               <p class="mb-2"><b class="text-brand">Ativação pendente</b></p>
-              <p class="mb-3">Faça a doação de ativação de <b>R$ 40,00</b> para manutenção do sistema (T.I.) e, em seguida, a doação de <b>R$ 260,00</b> ao seu donatário.</p>
+              <p class="mb-3">Faça a doação de ativação de <b>R$ <c:choose><c:when test="${tipoCicloAtual != null}">${tipoCicloAtual.valorTI}</c:when><c:otherwise>10,00</c:otherwise></c:choose></b> para manutenção do sistema (T.I.) e, em seguida, a doação de <b>R$ <c:choose><c:when test="${tipoCicloAtual != null}">${tipoCicloAtual.valorDoacao}</c:when><c:otherwise>90,00</c:otherwise></c:choose></b> ao seu donatário.</p>
               <hr/>
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-2"><b>PIX (telefone)</b></div>
                   <p class="mb-1">Chave: <b>85997151515</b></p>
-                  <p class="mb-1">Valor: <b>R$ 40,00</b></p>
+                  <p class="mb-1">Valor: <b>R$ <c:choose><c:when test="${tipoCicloAtual != null}">${tipoCicloAtual.valorTI}</c:when><c:otherwise>10,00</c:otherwise></c:choose></b></p>
                   <p class="mb-3">Descrição: <i>Doação inicial de ativação - T.I.</i></p>
                 </div>
                 <div class="col-md-6">
@@ -249,10 +249,93 @@
           </div>
         </c:if>
 
-        <!-- Espaço para cards/relatórios futuros -->
-        <div class="row">
-          <!-- Cards prontos para uso -->
-        </div>
+        <!-- Cards de progresso (gamificação) -->
+        <c:if test="${usuarioLogado.ativo}">
+          <div class="row">
+            <!-- Card Meu Ciclo -->
+            <div class="col-xl-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-trophy fa-2x mr-3" style="color:var(--gold)"></i>
+                    <div>
+                      <h6 class="mb-0 font-weight-bold" style="color:var(--ink)">Meu Ciclo</h6>
+                      <small class="text-muted">
+                        <c:choose>
+                          <c:when test="${tipoCicloAtual != null}">${tipoCicloAtual.nome}</c:when>
+                          <c:otherwise>Tabuleiro 1</c:otherwise>
+                        </c:choose>
+                      </small>
+                    </div>
+                  </div>
+                  <div class="mb-2">
+                    <div class="d-flex justify-content-between mb-1">
+                      <small class="font-weight-bold">Doações recebidas</small>
+                      <small class="font-weight-bold">${usuarioLogado.quantDoacoesRecebidas}/8</small>
+                    </div>
+                    <div class="progress" style="height:10px; border-radius:999px;">
+                      <c:set var="progresso" value="${usuarioLogado.quantDoacoesRecebidas * 100 / 8}" />
+                      <div class="progress-bar" role="progressbar" style="width:${progresso > 100 ? 100 : progresso}%; background:linear-gradient(90deg, var(--olive), var(--gold)); border-radius:999px;"></div>
+                    </div>
+                  </div>
+                  <c:choose>
+                    <c:when test="${usuarioLogado.quantDoacoesRecebidas >= 8}">
+                      <small style="color:#16a34a; font-weight:700"><i class="fas fa-star mr-1"></i>Ciclo completo!</small>
+                    </c:when>
+                    <c:otherwise>
+                      <small style="color:var(--muted)"><i class="fas fa-fire mr-1" style="color:#f59e0b"></i>Faltam ${8 - usuarioLogado.quantDoacoesRecebidas} doações!</small>
+                    </c:otherwise>
+                  </c:choose>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Minha Rede -->
+            <div class="col-xl-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-users fa-2x mr-3" style="color:var(--olive)"></i>
+                    <div>
+                      <h6 class="mb-0 font-weight-bold" style="color:var(--ink)">Minha Rede</h6>
+                      <small class="text-muted">Ciclos completados: ${usuarioLogado.quantCiclos}</small>
+                    </div>
+                  </div>
+                  <a href="/vemtambem/usuario/minha-rede" class="btn btn-olive btn-sm px-3">Ver Rede <i class="fas fa-arrow-right ml-1"></i></a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Próximo Passo -->
+            <div class="col-xl-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-gift fa-2x mr-3" style="color:#8b5cf6"></i>
+                    <div>
+                      <h6 class="mb-0 font-weight-bold" style="color:var(--ink)">Próximo Passo</h6>
+                      <small class="text-muted">
+                        <c:choose>
+                          <c:when test="${!usuarioLogado.doacaoFeita}">Realize sua doação</c:when>
+                          <c:when test="${usuarioLogado.quantDoacoesRecebidas < 8}">Convide mais pessoas</c:when>
+                          <c:otherwise>Reativar para o próximo nível</c:otherwise>
+                        </c:choose>
+                      </small>
+                    </div>
+                  </div>
+                  <c:choose>
+                    <c:when test="${!usuarioLogado.doacaoFeita}">
+                      <a href="/vemtambem/usuario/donatarios" class="btn btn-olive btn-sm px-3">Minha Contribuição <i class="fas fa-arrow-right ml-1"></i></a>
+                    </c:when>
+                    <c:otherwise>
+                      <a href="/vemtambem/usuario/doadores" class="btn btn-olive btn-sm px-3">Ver Doadores <i class="fas fa-arrow-right ml-1"></i></a>
+                    </c:otherwise>
+                  </c:choose>
+                </div>
+              </div>
+            </div>
+          </div>
+        </c:if>
 
       </div><!-- /container-fluid -->
     </div><!-- /content -->
@@ -261,7 +344,7 @@
     <footer class="sticky-footer">
       <div class="container my-auto">
         <div class="copyright text-center my-auto text-white" style="opacity:.9">
-          <span>© Vem Também 2025</span>
+          <span>© Vem Também 2025-2026</span>
         </div>
       </div>
     </footer>

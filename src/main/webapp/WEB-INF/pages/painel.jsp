@@ -23,6 +23,8 @@
   <!-- SB Admin 2 -->
   <spring:url value="/resources/css/sb-admin-2.min.css" var="sbadmin2mincss" />
   <link href="${sbadmin2mincss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-theme.css" var="vtthemecss" />
+  <link href="${vtthemecss}" rel="stylesheet"/>
 
   <!-- Tema VT (override) -->
   <style>

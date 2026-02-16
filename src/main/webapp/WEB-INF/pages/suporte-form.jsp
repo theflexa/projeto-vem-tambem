@@ -27,6 +27,8 @@
   <!-- SB Admin 2 -->
   <spring:url value="/resources/css/sb-admin-2.min.css" var="sbadmin2mincss" />
   <link href="${sbadmin2mincss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-theme.css" var="vtthemecss" />
+  <link href="${vtthemecss}" rel="stylesheet"/>
 
   <style>
     :root{
@@ -195,7 +197,7 @@
     <footer class="sticky-footer bg-white">
       <div class="container my-auto">
         <div class="copyright text-center my-auto">
-          <span>Copyright &copy; Vem Também 2025</span>
+          <span>Copyright &copy; Vem Também 2025-2026</span>
         </div>
       </div>
     </footer>

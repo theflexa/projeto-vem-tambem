@@ -27,6 +27,8 @@
   <!-- SB Admin 2 -->
   <spring:url value="/resources/css/sb-admin-2.min.css" var="sbadmin2mincss" />
   <link href="${sbadmin2mincss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-theme.css" var="vtthemecss" />
+  <link href="${vtthemecss}" rel="stylesheet"/>
 
   <spring:url value="/resources/vendor/datatables/dataTables.bootstrap4.min.css" var="dtcss" />
   <link href="${dtcss}" rel="stylesheet"/>
@@ -152,9 +154,41 @@
 	.node .lvl.l3{ background:#ddd6fe; color:#1f1060; }
 	.node i{ opacity:.75 }
 
+	/* ====== Mobile tree responsiveness ====== */
+	.tree{
+	  -webkit-overflow-scrolling: touch;
+	  scrollbar-width: thin;
+	  scrollbar-color: rgba(111,122,0,.3) transparent;
+	}
+	.tree::-webkit-scrollbar{ height: 6px; }
+	.tree::-webkit-scrollbar-track{ background: transparent; }
+	.tree::-webkit-scrollbar-thumb{ background: rgba(111,122,0,.3); border-radius: 999px; }
 
-	    
-	    
+	@media (max-width: 767.98px){
+	  .tree{ padding: .75rem 0; }
+	  .tree ul{ gap: .75rem; min-width: max-content; padding-left: 1rem; padding-right: 1rem; }
+	  .tree ul ul{ gap: .5rem; }
+	  .tree li{ padding: calc(var(--branch) * 1.5) .25rem 0 .25rem; }
+	  .node{ font-size: .8rem; padding: .35rem .55rem; border-radius: 10px; gap: .35rem; }
+	  .node .lvl{ font-size: .65rem; padding: .2rem .35rem; }
+	}
+	/* Scroll hint gradient on mobile */
+	.tree-wrapper{
+	  position: relative;
+	}
+	.tree-wrapper::after{
+	  content: '';
+	  position: absolute; top: 0; right: 0; bottom: 0;
+	  width: 24px;
+	  background: linear-gradient(90deg, transparent, rgba(255,255,255,.7));
+	  pointer-events: none;
+	  opacity: 1;
+	  transition: opacity .3s;
+	}
+	@media (min-width: 768px){
+	  .tree-wrapper::after{ display: none; }
+	}
+
   </style>
 </head>
 <body id="page-top">
@@ -194,6 +228,7 @@
     <hr class="sidebar-divider d-none d-md-block"/>
     <div class="sidebar-heading">Atendimento</div>
     <li class="nav-item ${fn:startsWith(uri, cp.concat('/suporte')) ? 'active' : ''}">
+      <a class="nav-link" href="/vemtambem/faq"><i class="fas fa-question-circle"></i><span>Perguntas Frequentes</span></a>
       <a class="nav-link" href="https://wa.me/559184415184?text=Ol%C3%A1!%20Preciso%20de%20suporte%20na%20plataforma%20Vem%20Também" target="_blank"><i class="fas fa-headset"></i><span>Suporte</span></a>
     </li>
 
@@ -295,7 +330,7 @@
                 <div class="tab-pane fade ${aba.ativo ? 'show active' : ''}" id="tab${status.index + 1}" role="tabpanel" aria-labelledby="tab${status.index + 1}-tab">
 					
 					<!-- Árvore da Rede -->
-					<div class="tree">
+					<div class="tree-wrapper"><div class="tree">
 					  <ul>
 					    <li>
 					      <!-- RAIZ: Usuário logado -->
@@ -512,10 +547,10 @@
 					      </ul>
 					    </li>
 					  </ul>
-					</div>
+					</div></div><!-- /tree-wrapper -->
 
-			
-                  
+
+
 
                 </div>
               </c:forEach>

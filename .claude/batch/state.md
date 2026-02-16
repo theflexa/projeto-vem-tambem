@@ -31,3 +31,25 @@
 - painel.jsp: "Meu Ciclo" card has 5-tier motivational messages; new "Nível" card with colored icon badge replaces old "Minha Rede" card
 - doadores.jsp: progress bar messages now have 6 tiers (0, 1-3, 4, 5-6, 7, 8) with varied Duolingo-style copy
 - minha-rede.jsp: added mini progress bar, cycles badge, and tiered motivational message in content-surface header
+
+---
+## Task 4 (T7): Frontend Improvements (completed)
+**Status:** PASS
+**Files Changed:** vt-theme.css, painel.jsp, suporte-form.jsp, minha-rede.jsp, recrutador.jsp, error/403.jsp, error/404.jsp, error/erro.jsp
+**Summary:** Enhanced vt-theme.css with micro-interactions (hover, fadeInUp, transitions, focus a11y), added link to painel.jsp and suporte-form.jsp. Updated footer to 2025-2026 in all remaining JSPs. Added mobile tree responsiveness to minha-rede.jsp with scroll hint, touch scrolling, and smaller nodes.
+**Notes for Next Task:**
+- vt-theme.css now linked in 8 admin-layout JSPs; standalone pages (index, cadastro, esqueci-senha, recrutador, onboarding) keep their own inline styles
+- minha-rede.jsp tree wrapped in .tree-wrapper with right-edge gradient hint on mobile
+- All footers across all JSPs now show "2025-2026"
+
+---
+## Task 5 (T3): Onboarding
+**Status:** PASS
+**Files Changed:** onboarding.jsp (created), UsuarioController.java, AutorizadorInterceptor.java
+**Summary:** Created 3-step onboarding page with Lottie animations, demo tabuleiro, and CTA. Redirect from salvarExterno() to onboarding. Route whitelisted.
+
+---
+## Task 6 (T8): Top 3 Suggestions
+**Status:** PASS
+**Files Changed:** painel.jsp, faq.jsp (created), HomeController.java, AutorizadorInterceptor.java, all JSP sidebars
+**Summary:** (1) Copy invite link button with toast on painel.jsp, (2) FAQ page with 7-item Bootstrap accordion, (3) Session countdown timer with 1min warning modal. FAQ link added to all sidebars.

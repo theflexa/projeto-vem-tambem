@@ -1,0 +1,186 @@
+/* ====== VT Theme — Shared Variables & Styles ====== */
+
+:root {
+  --olive: #6f7a00;
+  --olive-700: #5b6400;
+  --gold: #f3c900;
+  --gold-700: #d9b200;
+  --ink: #1f2937;
+  --muted: #6b7280;
+  --surface: #ffffff;
+  --bg: #f7f7f5;
+  --radius: 18px;
+}
+
+/* ====== Typography ====== */
+html, body {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+}
+
+/* ====== Background ====== */
+body {
+  background: radial-gradient(1200px 800px at 15% 10%, #d9cc4a 0%, #b7ad1a 30%, #8e8a0a 55%, #6f7a00 85%);
+  min-height: 100vh;
+}
+
+/* ====== Sidebar ====== */
+.bg-gradient-primary {
+  background: linear-gradient(180deg, var(--olive) 0%, #8e8a0a 60%, var(--gold) 120%) !important;
+}
+.sidebar .nav-item .nav-link {
+  border-radius: 12px;
+  margin: 2px 8px;
+  font-weight: 600;
+  letter-spacing: .1px;
+}
+.sidebar .nav-item .nav-link i {
+  opacity: .9;
+  margin-right: .35rem;
+}
+.sidebar .nav-item.active > .nav-link,
+.sidebar .nav-item .nav-link.active,
+.sidebar .nav-item .nav-link:hover {
+  background: rgba(255, 255, 255, .16);
+}
+.sidebar .sidebar-brand {
+  height: 4.5rem;
+}
+
+/* ====== Topbar ====== */
+.topbar {
+  border: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, .05);
+}
+.topbar .navbar-nav .nav-link {
+  font-weight: 600;
+  color: #4b5563;
+}
+
+/* ====== Cards, Alerts, Modals ====== */
+.card, .alert, .modal-content {
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .08);
+}
+
+/* ====== Buttons ====== */
+.btn-olive {
+  background: linear-gradient(90deg, var(--olive) 0%, var(--gold) 100%);
+  border: 0;
+  color: #141a00;
+  font-weight: 700;
+  border-radius: 999px;
+}
+.btn-olive:hover {
+  filter: brightness(.95);
+}
+.btn-linkVT {
+  color: var(--olive-700);
+  font-weight: 600;
+}
+.text-brand {
+  color: var(--olive-700);
+}
+
+/* ====== Content Surface ====== */
+#content-wrapper {
+  background: transparent;
+}
+.container-fluid {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.content-surface {
+  background: #ffffffd9;
+  backdrop-filter: blur(6px);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+.content-surface h1 {
+  color: var(--ink);
+  font-weight: 800;
+  margin-bottom: .25rem;
+}
+.content-surface p {
+  color: var(--muted);
+  margin-bottom: 0;
+}
+
+/* ====== Micro-interactions ====== */
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, .12);
+}
+.btn {
+  transition: all 0.2s ease;
+}
+a {
+  transition: color 0.15s ease;
+}
+.nav-link {
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Fade-in animation for cards */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.card {
+  animation: fadeInUp 0.4s ease both;
+}
+.card:nth-child(2) { animation-delay: 0.08s; }
+.card:nth-child(3) { animation-delay: 0.16s; }
+.card:nth-child(4) { animation-delay: 0.24s; }
+
+/* ====== Progress Bar ====== */
+.progress {
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-bar {
+  transition: width 0.6s ease;
+}
+
+/* ====== Tables ====== */
+.table-responsive {
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #fff;
+}
+
+/* ====== Focus accessibility ====== */
+a:focus,
+button:focus,
+.btn:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ====== Footer ====== */
+.sticky-footer {
+  background: transparent !important;
+}
+.sticky-footer .copyright {
+  color: rgba(255, 255, 255, .85);
+}
+
+/* ====== Responsiveness ====== */
+@media (max-width: 575.98px) {
+  .content-surface {
+    padding: .9rem;
+  }
+  .alert {
+    padding: .9rem;
+  }
+}

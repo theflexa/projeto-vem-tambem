@@ -448,7 +448,7 @@
 
 
   <footer>
-    <div class="container">Copyright © Vem Também 2025</div>
+    <div class="container">Copyright © Vem Também 2025-2026</div>
   </footer>
 
   <!-- CTA fixo no mobile -->

@@ -122,7 +122,7 @@
     </c:if>
   </div>
 
-  <p class="text-center text-white mt-3" style="opacity:.9">© Vem Também 2025</p>
+  <p class="text-center text-white mt-3" style="opacity:.9">© Vem Também 2025-2026</p>
 </div>
 
 <!-- JS -->

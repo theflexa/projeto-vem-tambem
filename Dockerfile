@@ -10,6 +10,6 @@ RUN mvn clean package -DskipTests -B
 # Stage 2: Runtime
 FROM tomcat:9-jdk21-temurin
 RUN rm -rf /usr/local/tomcat/webapps/*
-COPY --from=build /app/target/vemtambem.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=build /app/target/vemtambem.war /usr/local/tomcat/webapps/vemtambem.war
 EXPOSE 8080
 CMD ["catalina.sh", "run"]

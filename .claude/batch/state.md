@@ -21,3 +21,13 @@
 - UsuarioServiceImpl now injects TipoCicloDAO and sets tipoCiclo on new Ciclo creation
 - painel.jsp uses ${tipoCicloAtual.valorTI} and ${tipoCicloAtual.valorDoacao} with fallbacks
 - donatarios.jsp was already updated with dynamic values by a prior edit
+
+---
+## Task 3 (T5): Gamification
+**Status:** PASS
+**Files Changed:** src/main/webapp/WEB-INF/pages/painel.jsp, src/main/webapp/WEB-INF/pages/doadores.jsp, src/main/webapp/WEB-INF/pages/minha-rede.jsp
+**Summary:** Enhanced gamification across 3 JSPs with Duolingo-style motivational messages, level badges (Iniciante/Colaborador/Veterano/Mestre based on quantCiclos), and progress indicators.
+**Notes for Next Task:**
+- painel.jsp: "Meu Ciclo" card has 5-tier motivational messages; new "Nível" card with colored icon badge replaces old "Minha Rede" card
+- doadores.jsp: progress bar messages now have 6 tiers (0, 1-3, 4, 5-6, 7, 8) with varied Duolingo-style copy
+- minha-rede.jsp: added mini progress bar, cycles badge, and tiered motivational message in content-surface header

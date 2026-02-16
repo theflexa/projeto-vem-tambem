@@ -97,23 +97,24 @@
     <hr class="sidebar-divider"/>
     <div class="sidebar-heading">Operação</div>
 
+    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/minha-rede')) ? 'active' : ''}">
+      <a class="nav-link" href="${cp}/usuario/minha-rede"><i class="fas fa-network-wired"></i><span>Minha Rede</span></a>
+    </li>
     <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/dados-pessoais')) ? 'active' : ''}">
       <a class="nav-link" href="${cp}/usuario/dados-pessoais"><i class="fas fa-user"></i><span>Meus Dados</span></a>
     </li>
     <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/donatarios')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/donatarios"><i class="fas fa-hands-helping"></i><span>Donatários</span></a>
+      <a class="nav-link" href="${cp}/usuario/donatarios"><i class="fas fa-hand-holding-heart"></i><span>Minha Contribuição</span></a>
     </li>
     <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/doadores')) ? 'active' : ''}">
       <a class="nav-link" href="${cp}/usuario/doadores"><i class="fas fa-donate"></i><span>Doadores</span></a>
-    </li>
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/minha-rede')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/minha-rede"><i class="fas fa-network-wired"></i><span>Minha Rede</span></a>
     </li>
     <li class="nav-item"><a class="nav-link" href="${cp}/sair"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a></li>
 
     <hr class="sidebar-divider d-none d-md-block"/>
     <div class="sidebar-heading">Atendimento</div>
     <li class="nav-item ${fn:startsWith(uri, cp.concat('/suporte')) ? 'active' : ''}">
+      <a class="nav-link" href="/vemtambem/faq"><i class="fas fa-question-circle"></i><span>Perguntas Frequentes</span></a>
       <a class="nav-link" href="https://wa.me/559184415184?text=Ol%C3%A1!%20Preciso%20de%20suporte%20na%20plataforma%20Vem%20Também" target="_blank"><i class="fas fa-headset"></i><span>Suporte</span></a>
     </li>
 
@@ -148,8 +149,48 @@
 
       <div class="container-fluid">
         <div class="content-surface mb-3">
-          <h1 class="h3">Doadores</h1>
-          <p>Acompanhe os comprovantes e ative os doadores do seu ciclo.</p>
+          <div class="d-flex align-items-center justify-content-between flex-wrap">
+            <div>
+              <h1 class="h3">Doadores</h1>
+              <p>Acompanhe os comprovantes e ative os doadores do seu ciclo.</p>
+            </div>
+            <c:if test="${tipoCicloAtual != null}">
+              <span class="badge badge-pill" style="background:var(--olive); color:#fff; font-size:.85rem; padding:.4rem .9rem;">
+                <i class="fas fa-trophy mr-1"></i>${tipoCicloAtual.nome}
+              </span>
+            </c:if>
+          </div>
+          <!-- Barra de progresso -->
+          <div class="mt-3">
+            <div class="d-flex justify-content-between mb-1">
+              <small class="font-weight-bold" style="color:var(--ink)">Progresso do ciclo</small>
+              <small class="font-weight-bold" style="color:var(--ink)">${pessoa.quantDoacoesRecebidas}/8 doações</small>
+            </div>
+            <div class="progress" style="height:12px; border-radius:999px;">
+              <c:set var="progresso" value="${pessoa.quantDoacoesRecebidas * 100 / 8}" />
+              <div class="progress-bar" role="progressbar" style="width:${progresso > 100 ? 100 : progresso}%; background:linear-gradient(90deg, var(--olive), var(--gold)); border-radius:999px;"></div>
+            </div>
+            <c:choose>
+              <c:when test="${pessoa.quantDoacoesRecebidas >= 8}">
+                <small style="color:#16a34a; font-weight:700"><i class="fas fa-star mr-1"></i>Ciclo completo! Você é incrível!</small>
+              </c:when>
+              <c:when test="${pessoa.quantDoacoesRecebidas == 7}">
+                <small style="color:#f59e0b; font-weight:700"><i class="fas fa-fire mr-1"></i>Falta só 1! Você está on fire!</small>
+              </c:when>
+              <c:when test="${pessoa.quantDoacoesRecebidas >= 5}">
+                <small style="color:#f59e0b; font-weight:700"><i class="fas fa-fire mr-1"></i>Quase lá! Só mais ${8 - pessoa.quantDoacoesRecebidas}!</small>
+              </c:when>
+              <c:when test="${pessoa.quantDoacoesRecebidas >= 4}">
+                <small style="color:var(--muted)"><i class="fas fa-fire mr-1" style="color:#f59e0b"></i>Metade do caminho! Continue firme!</small>
+              </c:when>
+              <c:when test="${pessoa.quantDoacoesRecebidas >= 1}">
+                <small style="color:var(--muted)"><i class="fas fa-fire mr-1" style="color:#f59e0b"></i>Bom começo! Faltam ${8 - pessoa.quantDoacoesRecebidas} doações!</small>
+              </c:when>
+              <c:otherwise>
+                <small style="color:var(--muted)"><i class="fas fa-seedling mr-1" style="color:#16a34a"></i>Sua jornada começa aqui! Convide pessoas para doar.</small>
+              </c:otherwise>
+            </c:choose>
+          </div>
         </div>
 
         <div class="card shadow mb-4">
@@ -491,7 +532,7 @@
     <footer class="sticky-footer bg-white">
       <div class="container my-auto">
         <div class="copyright text-center my-auto">
-          <span>Copyright &copy; Vem Também 2025</span>
+          <span>© Vem Também 2025-2026</span>
         </div>
       </div>
     </footer>

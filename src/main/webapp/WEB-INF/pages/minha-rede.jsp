@@ -177,17 +177,17 @@
     <hr class="sidebar-divider"/>
     <div class="sidebar-heading">Operação</div>
 
+    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/minha-rede')) ? 'active' : ''}">
+      <a class="nav-link" href="${cp}/usuario/minha-rede"><i class="fas fa-network-wired"></i><span>Minha Rede</span></a>
+    </li>
     <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/dados-pessoais')) ? 'active' : ''}">
       <a class="nav-link" href="${cp}/usuario/dados-pessoais"><i class="fas fa-user"></i><span>Meus Dados</span></a>
     </li>
     <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/donatarios')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/donatarios"><i class="fas fa-hands-helping"></i><span>Donatários</span></a>
+      <a class="nav-link" href="${cp}/usuario/donatarios"><i class="fas fa-hand-holding-heart"></i><span>Minha Contribuição</span></a>
     </li>
     <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/doadores')) ? 'active' : ''}">
       <a class="nav-link" href="${cp}/usuario/doadores"><i class="fas fa-donate"></i><span>Doadores</span></a>
-    </li>
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/minha-rede')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/minha-rede"><i class="fas fa-network-wired"></i><span>Minha Rede</span></a>
     </li>
     <li class="nav-item"><a class="nav-link" href="${cp}/sair"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a></li>
 
@@ -228,8 +228,44 @@
 
       <div class="container-fluid">
         <div class="content-surface mb-3">
-          <h1 class="h3">Minha Rede</h1>
-          <p>Todas as pessoas da sua rede, organizadas por ciclo.</p>
+          <div class="d-flex align-items-center justify-content-between flex-wrap">
+            <div>
+              <h1 class="h3">Minha Rede</h1>
+              <p>Todas as pessoas da sua rede, organizadas por ciclo.</p>
+            </div>
+            <div class="d-flex align-items-center flex-wrap" style="gap:.5rem">
+              <c:if test="${tipoCicloAtual != null}">
+                <span class="badge badge-pill" style="background:var(--olive); color:#fff; font-size:.85rem; padding:.4rem .9rem;">
+                  <i class="fas fa-trophy mr-1"></i>${tipoCicloAtual.nome}
+                </span>
+              </c:if>
+              <span class="badge badge-pill" style="background:#e0e7ff; color:#3730a3; font-size:.85rem; padding:.4rem .9rem;">
+                <i class="fas fa-star mr-1"></i>${pessoa.quantCiclos} ciclo(s)
+              </span>
+            </div>
+          </div>
+          <!-- Mini progresso -->
+          <div class="mt-2 d-flex align-items-center" style="gap:.75rem">
+            <div class="progress flex-grow-1" style="height:8px; border-radius:999px;">
+              <c:set var="progRede" value="${pessoa.quantDoacoesRecebidas * 100 / 8}" />
+              <div class="progress-bar" role="progressbar" style="width:${progRede > 100 ? 100 : progRede}%; background:linear-gradient(90deg, var(--olive), var(--gold)); border-radius:999px;"></div>
+            </div>
+            <small class="font-weight-bold" style="color:var(--ink); white-space:nowrap">${pessoa.quantDoacoesRecebidas}/8</small>
+          </div>
+          <c:choose>
+            <c:when test="${pessoa.quantDoacoesRecebidas >= 8}">
+              <small style="color:#16a34a; font-weight:700"><i class="fas fa-star mr-1"></i>Rede completa! Hora de subir de nível!</small>
+            </c:when>
+            <c:when test="${pessoa.quantDoacoesRecebidas >= 5}">
+              <small style="color:#f59e0b; font-weight:700"><i class="fas fa-fire mr-1"></i>Sua rede está crescendo rápido!</small>
+            </c:when>
+            <c:when test="${pessoa.quantDoacoesRecebidas >= 1}">
+              <small style="color:var(--muted)"><i class="fas fa-fire mr-1" style="color:#f59e0b"></i>Continue convidando para fortalecer sua rede!</small>
+            </c:when>
+            <c:otherwise>
+              <small style="color:var(--muted)"><i class="fas fa-seedling mr-1" style="color:#16a34a"></i>Comece agora! Cada pessoa faz a diferença.</small>
+            </c:otherwise>
+          </c:choose>
         </div>
 
         <div class="card shadow mb-4">
@@ -493,7 +529,7 @@
     <footer class="sticky-footer bg-white">
       <div class="container my-auto">
         <div class="copyright text-center my-auto">
-          <span>Copyright &copy; Vem Também 2025</span>
+          <span>© Vem Também 2025-2026</span>
         </div>
       </div>
     </footer>

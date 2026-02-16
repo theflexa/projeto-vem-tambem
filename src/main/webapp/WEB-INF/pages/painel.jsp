@@ -155,6 +155,7 @@
     <!-- Atendimento -->
     <div class="sidebar-heading">Atendimento</div>
     <li class="nav-item">
+      <a class="nav-link" href="/vemtambem/faq"><i class="fas fa-question-circle"></i><span>Perguntas Frequentes</span></a>
       <a class="nav-link" href="https://wa.me/559184415184?text=Ol%C3%A1!%20Preciso%20de%20suporte%20na%20plataforma%20Vem%20Também" target="_blank"><i class="fas fa-headset"></i><span>Suporte</span></a>
     </li>
 
@@ -280,25 +281,62 @@
                   </div>
                   <c:choose>
                     <c:when test="${usuarioLogado.quantDoacoesRecebidas >= 8}">
-                      <small style="color:#16a34a; font-weight:700"><i class="fas fa-star mr-1"></i>Ciclo completo!</small>
+                      <small style="color:#16a34a; font-weight:700"><i class="fas fa-star mr-1"></i>Ciclo completo! Você arrasou!</small>
+                    </c:when>
+                    <c:when test="${usuarioLogado.quantDoacoesRecebidas >= 6}">
+                      <small style="color:#f59e0b; font-weight:700"><i class="fas fa-fire mr-1"></i>Quase lá! Só mais ${8 - usuarioLogado.quantDoacoesRecebidas}!</small>
+                    </c:when>
+                    <c:when test="${usuarioLogado.quantDoacoesRecebidas >= 4}">
+                      <small style="color:var(--muted)"><i class="fas fa-fire mr-1" style="color:#f59e0b"></i>Metade do caminho! Continue assim!</small>
+                    </c:when>
+                    <c:when test="${usuarioLogado.quantDoacoesRecebidas >= 1}">
+                      <small style="color:var(--muted)"><i class="fas fa-fire mr-1" style="color:#f59e0b"></i>Boa! Faltam ${8 - usuarioLogado.quantDoacoesRecebidas} doações!</small>
                     </c:when>
                     <c:otherwise>
-                      <small style="color:var(--muted)"><i class="fas fa-fire mr-1" style="color:#f59e0b"></i>Faltam ${8 - usuarioLogado.quantDoacoesRecebidas} doações!</small>
+                      <small style="color:var(--muted)"><i class="fas fa-seedling mr-1" style="color:#16a34a"></i>Convide pessoas para começar!</small>
                     </c:otherwise>
                   </c:choose>
                 </div>
               </div>
             </div>
 
-            <!-- Card Minha Rede -->
+            <!-- Card Nível -->
             <div class="col-xl-4 col-md-6 mb-4">
               <div class="card h-100">
                 <div class="card-body">
                   <div class="d-flex align-items-center mb-3">
-                    <i class="fas fa-users fa-2x mr-3" style="color:var(--olive)"></i>
+                    <c:choose>
+                      <c:when test="${usuarioLogado.quantCiclos >= 3}">
+                        <div class="d-flex align-items-center justify-content-center mr-3" style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,#f59e0b,#f97316); color:#fff; font-size:1.1rem; font-weight:800;">
+                          <i class="fas fa-crown"></i>
+                        </div>
+                      </c:when>
+                      <c:when test="${usuarioLogado.quantCiclos >= 2}">
+                        <div class="d-flex align-items-center justify-content-center mr-3" style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,#a78bfa,#7c3aed); color:#fff; font-size:1.1rem; font-weight:800;">
+                          <i class="fas fa-gem"></i>
+                        </div>
+                      </c:when>
+                      <c:when test="${usuarioLogado.quantCiclos >= 1}">
+                        <div class="d-flex align-items-center justify-content-center mr-3" style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,#60a5fa,#3b82f6); color:#fff; font-size:1.1rem; font-weight:800;">
+                          <i class="fas fa-medal"></i>
+                        </div>
+                      </c:when>
+                      <c:otherwise>
+                        <div class="d-flex align-items-center justify-content-center mr-3" style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,#34d399,#10b981); color:#fff; font-size:1.1rem; font-weight:800;">
+                          <i class="fas fa-seedling"></i>
+                        </div>
+                      </c:otherwise>
+                    </c:choose>
                     <div>
-                      <h6 class="mb-0 font-weight-bold" style="color:var(--ink)">Minha Rede</h6>
-                      <small class="text-muted">Ciclos completados: ${usuarioLogado.quantCiclos}</small>
+                      <h6 class="mb-0 font-weight-bold" style="color:var(--ink)">
+                        <c:choose>
+                          <c:when test="${usuarioLogado.quantCiclos >= 3}">Mestre</c:when>
+                          <c:when test="${usuarioLogado.quantCiclos >= 2}">Veterano</c:when>
+                          <c:when test="${usuarioLogado.quantCiclos >= 1}">Colaborador</c:when>
+                          <c:otherwise>Iniciante</c:otherwise>
+                        </c:choose>
+                      </h6>
+                      <small class="text-muted">${usuarioLogado.quantCiclos} ciclo(s) completado(s)</small>
                     </div>
                   </div>
                   <a href="/vemtambem/usuario/minha-rede" class="btn btn-olive btn-sm px-3">Ver Rede <i class="fas fa-arrow-right ml-1"></i></a>
@@ -333,6 +371,19 @@
                   </c:choose>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- Copiar link de convite -->
+          <div class="card mb-4">
+            <div class="card-body d-flex align-items-center justify-content-between flex-wrap">
+              <div class="mr-3 mb-2">
+                <h6 class="mb-1 font-weight-bold" style="color:var(--ink)"><i class="fas fa-link mr-2" style="color:var(--olive)"></i>Convide pessoas para sua rede</h6>
+                <small class="text-muted">Compartilhe seu link exclusivo de convite</small>
+              </div>
+              <button id="btnCopiarLink" class="btn btn-olive btn-sm px-4 mb-2" onclick="copiarLinkConvite()">
+                <i class="fas fa-copy mr-1"></i> Copiar Link
+              </button>
             </div>
           </div>
         </c:if>
@@ -371,10 +422,105 @@
   </div>
 </div>
 
+<!-- Session Timeout Modal -->
+<div class="modal fade" id="sessionTimeoutModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="border-bottom:1px solid #e5e7eb">
+        <h5 class="modal-title"><i class="fas fa-clock mr-2" style="color:var(--gold)"></i>Sessão expirando</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <p class="mb-1">Sua sessão vai expirar em</p>
+        <h2 id="sessionCountdown" class="font-weight-bold" style="color:var(--olive)">1:00</h2>
+        <small class="text-muted">Clique em qualquer lugar ou interaja com a página para renovar.</small>
+      </div>
+      <div class="modal-footer" style="border-top:1px solid #e5e7eb">
+        <a class="btn btn-secondary btn-sm" href="/vemtambem/sair">Sair agora</a>
+        <button class="btn btn-olive btn-sm px-4" data-dismiss="modal" onclick="renovarSessao()">Continuar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast de feedback -->
+<div id="toastCopiar" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--olive);color:#fff;padding:10px 24px;border-radius:999px;font-weight:600;font-size:.9rem;z-index:10000;opacity:0;transition:opacity .3s;pointer-events:none;">
+  <i class="fas fa-check mr-1"></i> Link copiado!
+</div>
+
 <!-- JS -->
 <script type="text/javascript" src="<c:url value='/resources/vendor/jquery/jquery.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/vendor/bootstrap/js/bootstrap.bundle.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/vendor/jquery-easing/jquery.easing.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/js/sb-admin-2.min.js'/>"></script>
+
+<script>
+// Copiar link de convite
+function copiarLinkConvite() {
+  var login = '${usuarioLogado.login}';
+  var link = window.location.origin + '/vemtambem/usuario/convite?id=' + login;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(link).then(function() { mostrarToast(); });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = link; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    mostrarToast();
+  }
+}
+function mostrarToast() {
+  var t = document.getElementById('toastCopiar');
+  t.style.opacity = '1';
+  setTimeout(function(){ t.style.opacity = '0'; }, 2500);
+}
+
+// Contador regressivo de sessão (5 min = 300s)
+(function() {
+  var SESSION_TOTAL = 5 * 60;
+  var WARN_AT = 60;
+  var remaining = SESSION_TOTAL;
+  var warned = false;
+  var countdownTimer = null;
+
+  function resetTimer() {
+    remaining = SESSION_TOTAL;
+    warned = false;
+    if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+    $('#sessionTimeoutModal').modal('hide');
+  }
+
+  function startCountdown() {
+    countdownTimer = setInterval(function() {
+      remaining--;
+      if (remaining <= 0) {
+        clearInterval(countdownTimer);
+        window.location.href = '/vemtambem/sair';
+        return;
+      }
+      if (remaining <= WARN_AT && !warned) {
+        warned = true;
+        $('#sessionTimeoutModal').modal('show');
+      }
+      if (warned) {
+        var m = Math.floor(remaining / 60);
+        var s = remaining % 60;
+        $('#sessionCountdown').text(m + ':' + (s < 10 ? '0' : '') + s);
+      }
+    }, 1000);
+  }
+
+  $(document).ready(function() {
+    startCountdown();
+    $(document).on('click keypress mousemove', function() {
+      if (remaining > WARN_AT) { remaining = SESSION_TOTAL; }
+    });
+  });
+
+  window.renovarSessao = function() {
+    $.get('/vemtambem/painel', function() { resetTimer(); startCountdown(); });
+  };
+})();
+</script>
 </body>
 </html>

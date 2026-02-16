@@ -1,0 +1,9 @@
+﻿This task is already complete. The state file confirms Task 5 (T3) passed, and all three deliverables are in place:
+
+1. **onboarding.jsp** - Created with 3 interactive steps (Bem-vindo with Lottie, Tabuleiro demo, CTA), jQuery step navigation, dot indicators, CSS spotlight styling
+2. **UsuarioController.salvarExterno()** - Already redirects to `"onboarding"` (line 351)
+3. **AutorizadorInterceptor** - Already has `uri.contains("onboarding")` whitelisted (line 21)
+
+No further work needed — this task was completed in a prior batch run.
+
+BATCH_RESULT:PASS

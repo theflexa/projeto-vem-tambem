@@ -13,7 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
+
+import br.com.vemtambem.model.TipoCiclo;
 import br.com.vemtambem.model.Usuario;
+import br.com.vemtambem.service.TipoCicloService;
 import br.com.vemtambem.service.UsuarioService;
 
 @Controller
@@ -22,6 +26,9 @@ public class HomeController {
 	@Autowired
 	private UsuarioService usuarioService;
 
+	@Autowired
+	private TipoCicloService tipoCicloService;
+
 	@RequestMapping(value = "/")
 	public ModelAndView home(ModelAndView model) throws IOException {
 		model.setViewName("index");
@@ -29,8 +36,24 @@ public class HomeController {
 	}
 
 	@RequestMapping(value = "/painel")
-	public ModelAndView painel(ModelAndView model) throws IOException {
+	public ModelAndView painel(ModelAndView model, HttpServletRequest request) throws IOException {
+		List<TipoCiclo> tiposCiclo = tipoCicloService.listarAtivos();
+		TipoCiclo tipoCicloAtual = tiposCiclo.isEmpty() ? null : tiposCiclo.get(0);
+		model.addObject("tipoCicloAtual", tipoCicloAtual);
+
+		Long idUsuario = (Long) request.getSession().getAttribute("idUsuarioLogado");
+		if (idUsuario != null) {
+			Usuario usuarioLogado = usuarioService.pesquisarPorId(idUsuario);
+			model.addObject("pessoa", usuarioLogado);
+		}
+
 		model.setViewName("painel");
+		return model;
+	}
+
+	@RequestMapping(value = "/onboarding")
+	public ModelAndView onboarding(ModelAndView model) throws IOException {
+		model.setViewName("onboarding");
 		return model;
 	}
 
@@ -79,6 +102,12 @@ public class HomeController {
 			// Trate o caso em que o arquivo não existe
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
+	}
+
+	@RequestMapping(value = "/faq")
+	public ModelAndView faq(ModelAndView model) throws IOException {
+		model.setViewName("faq");
+		return model;
 	}
 
 	@RequestMapping(value = "/force-403")

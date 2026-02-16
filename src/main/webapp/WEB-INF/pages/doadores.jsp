@@ -28,6 +28,8 @@
   <!-- SB Admin 2 -->
   <spring:url value="/resources/css/sb-admin-2.min.css" var="sbadmin2mincss" />
   <link href="${sbadmin2mincss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-theme.css" var="vtthemecss" />
+  <link href="${vtthemecss}" rel="stylesheet"/>
 
   <spring:url value="/resources/vendor/datatables/dataTables.bootstrap4.min.css" var="dtcss" />
   <link href="${dtcss}" rel="stylesheet"/>

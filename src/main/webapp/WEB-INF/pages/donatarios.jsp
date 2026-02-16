@@ -9,7 +9,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Vem Também — Donatários</title>
+  <title>Vem Também — Minha Contribuição</title>
   <link rel="icon" type="image/png" href="<c:url value='/resources/img/logo_vertical_2.png'/>"/>
 
   <!-- Paths/URL atual -->
@@ -27,6 +27,8 @@
   <!-- SB Admin 2 -->
   <spring:url value="/resources/css/sb-admin-2.min.css" var="sbadmin2mincss" />
   <link href="${sbadmin2mincss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-theme.css" var="vtthemecss" />
+  <link href="${vtthemecss}" rel="stylesheet"/>
 
   <!-- Tema VT (override) -->
   <style>
@@ -114,23 +116,24 @@
     <hr class="sidebar-divider"/>
     <div class="sidebar-heading">Operação</div>
 
+    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/minha-rede')) ? 'active' : ''}">
+      <a class="nav-link" href="${cp}/usuario/minha-rede"><i class="fas fa-network-wired"></i><span>Minha Rede</span></a>
+    </li>
     <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/dados-pessoais')) ? 'active' : ''}">
       <a class="nav-link" href="${cp}/usuario/dados-pessoais"><i class="fas fa-user"></i><span>Meus Dados</span></a>
     </li>
     <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/donatarios')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/donatarios"><i class="fas fa-hands-helping"></i><span>Donatários</span></a>
+      <a class="nav-link" href="${cp}/usuario/donatarios"><i class="fas fa-hand-holding-heart"></i><span>Minha Contribuição</span></a>
     </li>
     <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/doadores')) ? 'active' : ''}">
       <a class="nav-link" href="${cp}/usuario/doadores"><i class="fas fa-donate"></i><span>Doadores</span></a>
-    </li>
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/minha-rede')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/minha-rede"><i class="fas fa-network-wired"></i><span>Minha Rede</span></a>
     </li>
     <li class="nav-item"><a class="nav-link" href="${cp}/sair"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a></li>
 
     <hr class="sidebar-divider d-none d-md-block"/>
     <div class="sidebar-heading">Atendimento</div>
     <li class="nav-item ${fn:startsWith(uri, cp.concat('/suporte')) ? 'active' : ''}">
+      <a class="nav-link" href="/vemtambem/faq"><i class="fas fa-question-circle"></i><span>Perguntas Frequentes</span></a>
       <a class="nav-link" href="https://wa.me/559184415184?text=Ol%C3%A1!%20Preciso%20de%20suporte%20na%20plataforma%20Vem%20Também" target="_blank"><i class="fas fa-headset"></i><span>Suporte</span></a>
     </li>
 
@@ -168,8 +171,8 @@
 
       <div class="container-fluid">
         <div class="content-surface mb-3">
-          <h1 class="h3">Donatários</h1>
-          <p>Todas as doações que você precisa realizar estão listadas por ciclo/etapa.</p>
+          <h1 class="h3">Minha Contribuição</h1>
+          <p>Acompanhe e realize suas doações em cada ciclo.</p>
         </div>
 
         <div class="card shadow mb-4">
@@ -250,7 +253,12 @@
                               </a>
                             </li>
                             <li><strong>Outro Telefone:</strong> ${aba.indicadoPrincipal.cicloAtivo.indicadoPrincipal.cicloAtivo.indicadoPrincipal.celular}</li>
-                            <li><strong>Valor da Doação:</strong> R$ 260,00</li>
+                            <li><strong>Valor da Doação:</strong>
+                              <c:choose>
+                                <c:when test="${tipoCicloAtual != null}">R$ ${tipoCicloAtual.valorDoacao}</c:when>
+                                <c:otherwise>R$ 90,00</c:otherwise>
+                              </c:choose>
+                            </li>
                             <c:if test="${aba.indicadoPrincipal.cicloAtivo.indicadoPrincipal.cicloAtivo.indicadoPrincipal.doacaoFeita == true}">
                               <li><strong>Chave PIX:</strong>
                                 ${aba.indicadoPrincipal.cicloAtivo.indicadoPrincipal.cicloAtivo.indicadoPrincipal.tipoChavePix.descricao}
@@ -305,7 +313,7 @@
     <footer class="sticky-footer bg-white">
       <div class="container my-auto">
         <div class="copyright text-center my-auto">
-          <span>Copyright &copy; Vem Também 2025</span>
+          <span>© Vem Também 2025-2026</span>
         </div>
       </div>
     </footer>

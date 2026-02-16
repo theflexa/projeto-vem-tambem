@@ -36,6 +36,10 @@ public class Ciclo {
 	private Usuario indicador;
 
 	@ManyToOne
+	@JoinColumn(name = "tipo_ciclo_id", referencedColumnName = "id")
+	private TipoCiclo tipoCiclo;
+
+	@ManyToOne
 	@JoinColumn(name = "indicado_principal_id", referencedColumnName = "id")
 	private Usuario indicadoPrincipal;
 	

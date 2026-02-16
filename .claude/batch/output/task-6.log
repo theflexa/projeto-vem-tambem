@@ -1,0 +1,11 @@
+﻿All 3 features are fully implemented and verified:
+
+1. **Copy invite link button** - painel.jsp has `navigator.clipboard` with toast feedback
+2. **FAQ page** - faq.jsp exists with 7-item Bootstrap accordion, `/faq` route in HomeController, whitelisted in AutorizadorInterceptor as public
+3. **Session countdown timer** - painel.jsp has countdown timer with modal warning
+
+The sidebar link to FAQ ("Perguntas Frequentes") is present in painel.jsp.
+
+This task was already completed by a previous run. The state.md already records it as PASS. No additional work needed.
+
+BATCH_RESULT:PASS

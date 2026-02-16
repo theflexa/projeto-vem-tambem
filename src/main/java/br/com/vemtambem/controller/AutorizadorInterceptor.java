@@ -18,6 +18,8 @@ public class AutorizadorInterceptor extends HandlerInterceptorAdapter {
             uri.endsWith("cadastrar") ||
             uri.endsWith("convite") ||
             uri.endsWith("salvar-externo") ||
+            uri.contains("onboarding") ||
+            uri.endsWith("faq") ||
             uri.contains("resources") ||
             uri.contains("esqueci-senha") ||
             uri.contains("enviar-codigo-senha") ||

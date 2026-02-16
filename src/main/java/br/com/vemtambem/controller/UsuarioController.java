@@ -29,8 +29,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import br.com.vemtambem.model.Ciclo;
 import br.com.vemtambem.model.TipoChavePix;
+import br.com.vemtambem.model.TipoCiclo;
 import br.com.vemtambem.model.Usuario;
 import br.com.vemtambem.service.CicloService;
+import br.com.vemtambem.service.TipoCicloService;
 import br.com.vemtambem.service.UsuarioService;
 import br.com.vemtambem.utils.DocumentValidator;
 
@@ -43,6 +45,9 @@ public class UsuarioController {
 
 	@Autowired
 	private CicloService cicloService;
+
+	@Autowired
+	private TipoCicloService tipoCicloService;
 
 	public UsuarioController() {
 	}
@@ -80,9 +85,14 @@ public class UsuarioController {
 		//List<Ciclo> ciclos = cicloService.pesquisarCiclosUsuariosDonatarios(usuarioLogado.getLogin());
 		List<Ciclo> ciclos = cicloService.pesquisarCiclosUsuario(usuarioLogado.getLogin());
 		
+		List<TipoCiclo> tiposCiclo = tipoCicloService.listarAtivos();
+		TipoCiclo tipoCicloAtual = tiposCiclo.isEmpty() ? null : tiposCiclo.get(0);
+
 		ModelAndView model = new ModelAndView();
 		model.addObject("pessoa", usuarioLogado);
 		model.addObject("ciclos", ciclos);
+		model.addObject("tipoCicloAtual", tipoCicloAtual);
+		model.addObject("tiposCiclo", tiposCiclo);
 		model.setViewName("donatarios");
 		return model;
 	}
@@ -99,10 +109,14 @@ public class UsuarioController {
 		if (usuario.getQuantDoacoesRecebidas() >= 8)
 			isCicloFinalizado = true;
 				
+		List<TipoCiclo> tiposCiclo = tipoCicloService.listarAtivos();
+		TipoCiclo tipoCicloAtual = tiposCiclo.isEmpty() ? null : tiposCiclo.get(0);
+
 		ModelAndView model = new ModelAndView();
 		model.addObject("pessoa", usuario);
 		model.addObject("isCicloFinalizado", isCicloFinalizado);
 		model.addObject("ciclos", ciclos);
+		model.addObject("tipoCicloAtual", tipoCicloAtual);
 
 		model.setViewName("doadores");
 		return model;
@@ -116,9 +130,13 @@ public class UsuarioController {
 
 		List<Ciclo> ciclos = cicloService.pesquisarCiclosUsuario(usuarioLogado.getLogin());
 
+		List<TipoCiclo> tiposCiclo = tipoCicloService.listarAtivos();
+		TipoCiclo tipoCicloAtual = tiposCiclo.isEmpty() ? null : tiposCiclo.get(0);
+
 		ModelAndView model = new ModelAndView();
 		model.addObject("pessoa", usuarioLogado);
 		model.addObject("ciclos", ciclos);
+		model.addObject("tipoCicloAtual", tipoCicloAtual);
 
 		model.setViewName("minha-rede");
 		return model;
@@ -330,7 +348,7 @@ public class UsuarioController {
 			session.setAttribute("idUsuarioLogado", usuario.getId());
 
 			model.addObject("sucesso", Boolean.TRUE);
-			model.setViewName("painel");
+			model.setViewName("onboarding");
 		}
 
 		return model;

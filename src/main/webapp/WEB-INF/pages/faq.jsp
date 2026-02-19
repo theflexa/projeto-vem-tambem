@@ -9,7 +9,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <title>Vem Também — Perguntas Frequentes</title>
+  <title>Vem TambÃ©m â€” Perguntas Frequentes</title>
   <link rel="icon" type="image/png" href="<c:url value='/resources/img/logo_vertical_2.png'/>"/>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,8 +20,16 @@
   <link href="${sbadmin2mincss}" rel="stylesheet"/>
   <spring:url value="/resources/css/vt-theme.css" var="vtthemecss" />
   <link href="${vtthemecss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-layout.css" var="vtlayoutcss" />
+  <link href="${vtlayoutcss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-components.css" var="vtcomponentscss" />
+  <link href="${vtcomponentscss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-tour.css" var="vttourcss" />
+  <link href="${vttourcss}" rel="stylesheet"/>
+  <spring:url value="/resources/vendor/introjs/introjs.min.css" var="introcss" />
+  <link href="${introcss}" rel="stylesheet"/>
 </head>
-<body id="page-top">
+<body id="page-top" data-user-id="${usuarioLogado.id}">
 
 <div id="wrapper">
   <!-- Sidebar -->
@@ -29,25 +37,17 @@
 
   <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
-      <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow-sm">
-        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-2"><i class="fa fa-bars"></i></button>
-        <ul class="navbar-nav ml-auto">
-          <div class="topbar-divider d-none d-sm-block"></div>
-          <li class="nav-item dropdown no-arrow">
-            <a class="nav-link" href="#"><span class="mr-2 d-sm-inline text-gray-700 small"><i class="fas fa-user-circle"></i> ${usuarioLogado.nome}</span></a>
-          </li>
-        </ul>
-      </nav>
+      <jsp:include page="/WEB-INF/includes/topbar.jsp" />
 
       <div class="container-fluid">
         <div class="content-surface mb-4">
           <h1 class="h3 mb-0"><i class="fas fa-question-circle mr-2 icon-gold"></i>Perguntas Frequentes</h1>
-          <p class="mb-0">Tire suas dúvidas sobre a plataforma Vem Também.</p>
+          <p class="mb-0">Tire suas dÃºvidas sobre a plataforma Vem TambÃ©m.</p>
         </div>
 
         <div class="card mb-4">
           <div class="card-body p-0">
-            <div id="faqAccordion">
+            <div id="faqAccordion" data-tour-id="faq-accordion">
 
               <!-- FAQ 1 -->
               <div class="border-bottom">
@@ -55,13 +55,13 @@
                   <h6 class="mb-0">
                     <a class="d-flex align-items-center text-decoration-none" style="color:var(--ink);font-weight:700;cursor:pointer" data-toggle="collapse" data-target="#faq1body" aria-expanded="true">
                       <i class="fas fa-chevron-down mr-2 small" style="transition:transform .2s"></i>
-                      O que é a plataforma Vem Também?
+                      O que Ã© a plataforma Vem TambÃ©m?
                     </a>
                   </h6>
                 </div>
                 <div id="faq1body" class="collapse show" data-parent="#faqAccordion">
                   <div class="px-3 pb-3" style="color:var(--muted)">
-                    A Vem Também é uma plataforma de doações colaborativas onde cada participante contribui e recebe doações em uma rede organizada em formato de tabuleiro (árvore binária). É uma forma simples, justa e rápida de praticar a generosidade.
+                    A Vem TambÃ©m Ã© uma plataforma de doaÃ§Ãµes colaborativas onde cada participante contribui e recebe doaÃ§Ãµes em uma rede organizada em formato de jornada (Ã¡rvore binÃ¡ria). Ã‰ uma forma simples, justa e rÃ¡pida de praticar a generosidade.
                   </div>
                 </div>
               </div>
@@ -72,13 +72,13 @@
                   <h6 class="mb-0">
                     <a class="d-flex align-items-center text-decoration-none collapsed" style="color:var(--ink);font-weight:700;cursor:pointer" data-toggle="collapse" data-target="#faq2body" aria-expanded="false">
                       <i class="fas fa-chevron-down mr-2 small" style="transition:transform .2s"></i>
-                      Como funciona o Tabuleiro?
+                      Como funciona a Jornada da Semente?
                     </a>
                   </h6>
                 </div>
                 <div id="faq2body" class="collapse" data-parent="#faqAccordion">
                   <div class="px-3 pb-3" style="color:var(--muted)">
-                    O tabuleiro funciona como uma árvore binária: você entra na rede, faz sua doação de ativação e a doação ao seu donatário. Conforme novas pessoas entram na sua rede, elas fazem doações para você. Quando 8 doações são recebidas, seu ciclo se completa e você pode reativar para o próximo nível.
+                    A Jornada da Semente funciona como uma Ã¡rvore binÃ¡ria: vocÃª entra na rede, realiza a contribuiÃ§Ã£o da jornada para o seu donatÃ¡rio e acompanha os avanÃ§os. Conforme novas pessoas entram na sua rede, elas fazem doaÃ§Ãµes para vocÃª. Quando 8 doaÃ§Ãµes sÃ£o recebidas, seu ciclo se completa e vocÃª pode avanÃ§ar para a prÃ³xima jornada.
                   </div>
                 </div>
               </div>
@@ -89,13 +89,13 @@
                   <h6 class="mb-0">
                     <a class="d-flex align-items-center text-decoration-none collapsed" style="color:var(--ink);font-weight:700;cursor:pointer" data-toggle="collapse" data-target="#faq3body" aria-expanded="false">
                       <i class="fas fa-chevron-down mr-2 small" style="transition:transform .2s"></i>
-                      Quais são os valores de doação?
+                      Quais sÃ£o os valores de doaÃ§Ã£o?
                     </a>
                   </h6>
                 </div>
                 <div id="faq3body" class="collapse" data-parent="#faqAccordion">
                   <div class="px-3 pb-3" style="color:var(--muted)">
-                    No Tabuleiro 1, a doação de ativação (T.I.) é de R$ 10,00 e a doação ao donatário é de R$ 90,00. Nos níveis seguintes, os valores aumentam proporcionalmente (Tabuleiro 2: R$ 50 + R$ 450, Tabuleiro 3: R$ 100 + R$ 900).
+                    Na Jornada da Semente, a doaÃ§Ã£o da jornada Ã© de R$ 60,00 e hÃ¡ uma taxa de manutenção de 9,5% sobre o valor da jornada. A mesma regra percentual de manutenção se aplica nas demais jornadas.
                   </div>
                 </div>
               </div>
@@ -106,13 +106,13 @@
                   <h6 class="mb-0">
                     <a class="d-flex align-items-center text-decoration-none collapsed" style="color:var(--ink);font-weight:700;cursor:pointer" data-toggle="collapse" data-target="#faq4body" aria-expanded="false">
                       <i class="fas fa-chevron-down mr-2 small" style="transition:transform .2s"></i>
-                      Como faço para convidar alguém?
+                      Como faÃ§o para convidar alguÃ©m?
                     </a>
                   </h6>
                 </div>
                 <div id="faq4body" class="collapse" data-parent="#faqAccordion">
                   <div class="px-3 pb-3" style="color:var(--muted)">
-                    No seu Painel, há um botão "Copiar Link". Ao clicar, seu link exclusivo de convite será copiado para a área de transferência. Basta enviar esse link por WhatsApp, e-mail ou qualquer outra forma para a pessoa que deseja convidar.
+                    No seu Painel, hÃ¡ um botÃ£o "Copiar Link". Ao clicar, seu link exclusivo de convite serÃ¡ copiado para a Ã¡rea de transferÃªncia. Basta enviar esse link por WhatsApp, e-mail ou qualquer outra forma para a pessoa que deseja convidar.
                   </div>
                 </div>
               </div>
@@ -129,7 +129,7 @@
                 </div>
                 <div id="faq5body" class="collapse" data-parent="#faqAccordion">
                   <div class="px-3 pb-3" style="color:var(--muted)">
-                    Quando você recebe 8 doações, seu ciclo se completa. Você pode então reativar sua conta para avançar ao próximo tabuleiro, com valores maiores e maior retorno. Cada ciclo completado aumenta seu nível na plataforma.
+                    Quando vocÃª recebe 8 doaÃ§Ãµes, seu ciclo se completa. VocÃª pode entÃ£o avanÃ§ar para a prÃ³xima jornada, com novos objetivos e maior retorno. Cada ciclo completado aumenta seu nÃ­vel na plataforma.
                   </div>
                 </div>
               </div>
@@ -140,13 +140,13 @@
                   <h6 class="mb-0">
                     <a class="d-flex align-items-center text-decoration-none collapsed" style="color:var(--ink);font-weight:700;cursor:pointer" data-toggle="collapse" data-target="#faq6body" aria-expanded="false">
                       <i class="fas fa-chevron-down mr-2 small" style="transition:transform .2s"></i>
-                      Como faço o pagamento?
+                      Como faÃ§o o pagamento?
                     </a>
                   </h6>
                 </div>
                 <div id="faq6body" class="collapse" data-parent="#faqAccordion">
                   <div class="px-3 pb-3" style="color:var(--muted)">
-                    Os pagamentos são feitos via PIX. A chave e os valores são exibidos na tela de ativação (no Painel) e na tela de Minha Contribuição. Após realizar o PIX, envie o comprovante pela plataforma para validação.
+                    Os pagamentos sÃ£o feitos via PIX. A chave e os valores sÃ£o exibidos na tela de ativaÃ§Ã£o (no Painel) e na tela de Minha ContribuiÃ§Ã£o. ApÃ³s realizar o PIX, envie o comprovante pela plataforma para validaÃ§Ã£o.
                   </div>
                 </div>
               </div>
@@ -163,7 +163,7 @@
                 </div>
                 <div id="faq7body" class="collapse" data-parent="#faqAccordion">
                   <div class="px-3 pb-3" style="color:var(--muted)">
-                    Clique em "Suporte" no menu lateral para ser redirecionado ao nosso WhatsApp de atendimento. Nossa equipe está disponível para ajudá-lo com qualquer dúvida ou problema.
+                    Clique em "Suporte" no menu lateral para ser redirecionado ao nosso WhatsApp de atendimento. Nossa equipe estÃ¡ disponÃ­vel para ajudÃ¡-lo com qualquer dÃºvida ou problema.
                   </div>
                 </div>
               </div>
@@ -178,7 +178,7 @@
     <footer class="sticky-footer">
       <div class="container my-auto">
         <div class="copyright text-center my-auto">
-          <span>&copy; Vem Também 2025-2026</span>
+          <span>&copy; Vem TambÃ©m 2025-2026</span>
         </div>
       </div>
     </footer>
@@ -187,10 +187,20 @@
 
 <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
 
+<!-- Global Modals -->
+<jsp:include page="/WEB-INF/includes/global-modals.jsp" />
+
 <!-- JS -->
 <script type="text/javascript" src="<c:url value='/resources/vendor/jquery/jquery.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/vendor/bootstrap/js/bootstrap.bundle.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/vendor/jquery-easing/jquery.easing.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/js/sb-admin-2.min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-toast.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/vendor/introjs/intro.min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/vendor/lordicon/lordicon.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-core.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-icons.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-tour.js'/>"></script>
 </body>
 </html>
+

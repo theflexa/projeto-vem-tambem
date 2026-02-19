@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.vemtambem.model.Conexao;
+import br.com.vemtambem.model.Endereco;
+import br.com.vemtambem.model.TipoChavePix;
 import br.com.vemtambem.model.Usuario;
 
 @Repository
@@ -110,9 +112,86 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 
 	@Override
 	public Usuario pesquisarPorId(Long id) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Usuario.class);
-		criteria.add(Restrictions.eq("id", id));
-		Usuario usuario = (Usuario) criteria.uniqueResult();
+		if (id == null) {
+			return null;
+		}
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		Usuario usuario = null;
+
+		try {
+			connection = DriverManager.getConnection(Conexao.URL, Conexao.USUARIO, Conexao.SENHA);
+
+			String sql = "SELECT "
+					+ "u.id, u.nome, u.email, u.login, u.senha, u.tipo_conta, u.documento, u.celular, u.whatsapp, "
+					+ "u.tipo_chave_pix, u.chave_pix, u.ativo, u.admin, u.doacao_feita, u.comprovante_ativacao, "
+					+ "u.comprovante_deposito, u.motivo_recusa_ativacao, u.quantDoacoesRecebidas, u.quant_ciclos, u.termo_aceito, "
+					+ "e.logradouro, e.bairro, e.municipio, e.estado, e.cep, e.complemento "
+					+ "FROM usuario u "
+					+ "LEFT JOIN endereco e ON e.id = u.endereco_id "
+					+ "WHERE u.id = ?";
+
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setLong(1, id);
+			resultSet = preparedStatement.executeQuery();
+
+			if (resultSet.next()) {
+				usuario = new Usuario();
+				usuario.setId(resultSet.getLong("id"));
+				usuario.setNome(resultSet.getString("nome"));
+				usuario.setEmail(resultSet.getString("email"));
+				usuario.setLogin(resultSet.getString("login"));
+				usuario.setSenha(resultSet.getString("senha"));
+				usuario.setTipoConta(resultSet.getBoolean("tipo_conta"));
+				usuario.setDocumento(resultSet.getString("documento"));
+				usuario.setCelular(resultSet.getString("celular"));
+				usuario.setWhatsapp(resultSet.getString("whatsapp"));
+				usuario.setChavePix(resultSet.getString("chave_pix"));
+				usuario.setAtivo(resultSet.getBoolean("ativo"));
+				usuario.setAdmin(resultSet.getBoolean("admin"));
+				usuario.setDoacaoFeita(resultSet.getBoolean("doacao_feita"));
+				usuario.setComprovanteAtivacao(resultSet.getString("comprovante_ativacao"));
+				usuario.setComprovanteDeposito(resultSet.getString("comprovante_deposito"));
+				usuario.setMotivoRecusaAtivacao(resultSet.getString("motivo_recusa_ativacao"));
+				usuario.setQuantDoacoesRecebidas(resultSet.getInt("quantDoacoesRecebidas"));
+				usuario.setQuantCiclos(resultSet.getInt("quant_ciclos"));
+				usuario.setTermoAceito(resultSet.getBoolean("termo_aceito"));
+
+				String tipoChavePix = resultSet.getString("tipo_chave_pix");
+				if (tipoChavePix != null && !tipoChavePix.trim().isEmpty()) {
+					try {
+						usuario.setTipoChavePix(TipoChavePix.valueOf(tipoChavePix.trim()));
+					} catch (IllegalArgumentException ignored) {
+						// Mantém nulo caso o valor esteja inválido no banco.
+					}
+				}
+
+				Endereco endereco = new Endereco();
+				endereco.setLogradouro(resultSet.getString("logradouro"));
+				endereco.setBairro(resultSet.getString("bairro"));
+				endereco.setMunicipio(resultSet.getString("municipio"));
+				endereco.setEstado(resultSet.getString("estado"));
+				endereco.setCep(resultSet.getString("cep"));
+				endereco.setComplemento(resultSet.getString("complemento"));
+				usuario.setEndereco(endereco);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (resultSet != null)
+					resultSet.close();
+				if (preparedStatement != null)
+					preparedStatement.close();
+				if (connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
 		return usuario;
 	}
 
@@ -200,7 +279,8 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 		try {
 			connection = DriverManager.getConnection(Conexao.URL, Conexao.USUARIO, Conexao.SENHA);
 
-			String sql = "SELECT id, ativo, admin, nome FROM usuario WHERE login = ? AND senha = ?";
+			String sql = "SELECT id, ativo, admin, nome FROM usuario "
+					+ "WHERE LOWER(TRIM(login)) = LOWER(TRIM(?)) AND senha = ?";
 			preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, login);
 			preparedStatement.setString(2, senha);

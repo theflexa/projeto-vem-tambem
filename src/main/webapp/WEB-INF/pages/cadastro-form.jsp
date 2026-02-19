@@ -11,11 +11,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<meta http-equiv="Content-Security-Policy"
-      content="default-src 'self';
-               img-src 'self' data: https:;
-               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-               font-src 'self' https://fonts.gstatic.com data:;
-               script-src 'self' https://cdnjs.cloudflare.com;">
+	      content="default-src 'self';
+	               img-src 'self' data: https:;
+	               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+	               font-src 'self' https://fonts.gstatic.com data:;
+	               script-src 'self';">
 	
   	<title>Vem Também — Criar conta</title>
 	<link rel="icon" type="image/png" href="<c:url value='/resources/img/logo_vertical_2.png'/>"/>
@@ -29,6 +29,10 @@
   <!-- SB Admin 2 -->
   <spring:url value="/resources/css/sb-admin-2.min.css" var="sbadmin2mincss" />
   <link href="${sbadmin2mincss}" rel="stylesheet" />
+  <spring:url value="/resources/css/vt-theme.css" var="vtthemecss" />
+  <link href="${vtthemecss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-components.css" var="vtcomponentscss" />
+  <link href="${vtcomponentscss}" rel="stylesheet"/>
 
   <style>
     :root{
@@ -119,7 +123,7 @@
   </style>
 </head>
 
-<body>
+<body class="vt-auth-page">
   <main class="auth-shell" role="main">
     <div class="auth-header">
       <img src="<c:url value='/resources/img/logo_vertical.png'/>" alt="Vem Também">
@@ -127,6 +131,10 @@
 
     <div class="auth-body">
       <div class="text-center mb-4">
+        <div class="vt-kicker mx-auto mb-2" style="width:max-content">
+          <lord-icon src="<c:url value='/resources/vendor/lordicon/icons/ujxzdfjx.json'/>" trigger="loop" delay="2300" colors="primary:#2f855a,secondary:#f6d23a" style="width:18px;height:18px"></lord-icon>
+          Novo cadastro
+        </div>
         <div class="lead-sub">Crie sua conta para começar a transformar histórias.</div>
       </div>
 
@@ -301,7 +309,9 @@
   <script type="text/javascript" src="<c:url value='/resources/vendor/bootstrap/js/bootstrap.bundle.min.js'/>"></script>
   <script type="text/javascript" src="<c:url value='/resources/vendor/jquery-easing/jquery.easing.min.js'/>"></script>
   <script type="text/javascript" src="<c:url value='/resources/js/sb-admin-2.min.js'/>"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
+  <script type="text/javascript" src="<c:url value='/resources/vendor/inputmask/min/jquery.inputmask.bundle.min.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/resources/vendor/lordicon/lordicon.js'/>"></script>
+  <script type="text/javascript" src="<c:url value='/resources/js/vt-core.js'/>"></script>
 	
 	<spring:url value="/resources/js/masks.js" var="masksjs"/>
 	<script type="text/javascript" src="${masksjs}"></script>

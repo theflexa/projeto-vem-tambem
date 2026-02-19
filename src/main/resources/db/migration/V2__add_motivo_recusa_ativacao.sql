@@ -1,0 +1,2 @@
+ALTER TABLE usuario
+ADD COLUMN IF NOT EXISTS motivo_recusa_ativacao VARCHAR(600) NULL;

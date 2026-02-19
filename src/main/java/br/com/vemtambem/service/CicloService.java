@@ -3,6 +3,7 @@ package br.com.vemtambem.service;
 import java.util.List;
 
 import br.com.vemtambem.model.Ciclo;
+import br.com.vemtambem.model.RedePosicaoPreview;
 
 public interface CicloService {
 
@@ -15,5 +16,7 @@ public interface CicloService {
 	public List<Ciclo> pesquisarCiclosUsuario(String login);
 
 	public List<Ciclo> pesquisarCiclosUsuariosDonatarios(String login);
+
+	public RedePosicaoPreview pesquisarPosicaoUsuarioNaRede(Long idUsuario);
 
 }

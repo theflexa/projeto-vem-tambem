@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.vemtambem.dao.CicloDAO;
 import br.com.vemtambem.model.Ciclo;
+import br.com.vemtambem.model.RedePosicaoPreview;
 
 @Service
 public class CicloServiceImpl implements CicloService {
@@ -42,6 +43,12 @@ public class CicloServiceImpl implements CicloService {
 	@Override
 	public List<Ciclo> pesquisarCiclosUsuariosDonatarios(String login) {
 		return cicloDAO.pesquisarCiclosUsuariosDonatarios(login);
+	}
+
+	@Override
+	@Transactional
+	public RedePosicaoPreview pesquisarPosicaoUsuarioNaRede(Long idUsuario) {
+		return cicloDAO.pesquisarPosicaoUsuarioNaRede(idUsuario);
 	}
 
 }

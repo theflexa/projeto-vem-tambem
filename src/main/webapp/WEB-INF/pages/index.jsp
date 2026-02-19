@@ -15,23 +15,31 @@
   <link rel="icon" type="image/png" href="<c:url value='/resources/img/logo_vertical_2.png'/>"/>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link
-	href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+	href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700;800&display=swap"
 	rel="stylesheet">
+<spring:url value="/resources/vendor/fontawesome-free/css/all.min.css" var="allmincss" />
+<link href="${allmincss}" rel="stylesheet"/>
+<spring:url value="/resources/css/vt-theme.css" var="vtthemecss" />
+<link href="${vtthemecss}" rel="stylesheet"/>
+<spring:url value="/resources/css/vt-layout.css" var="vtlayoutcss" />
+<link href="${vtlayoutcss}" rel="stylesheet"/>
+<spring:url value="/resources/css/vt-components.css" var="vtcomponentscss" />
+<link href="${vtcomponentscss}" rel="stylesheet"/>
 
 <style>
 :root {
 	--olive: #6f7a00;
-	--olive-700: #5b6400;
+	--olive-700: #5c6600;
 	--gold: #f3c900;
-	--bg-1: #6f7a00;
-	--bg-2: #a39c00;
-	--bg-3: #f3c900;
-	--card: #ffffff;
+	--shell: #e8ece0;
+	--card: #edf1e6;
 	--muted: #6b7280;
-	--ring: rgba(111, 122, 0, .25);
-	--shadow: 0 20px 45px rgba(0, 0, 0, .12);
-	--radius: 18px;
+	--ring: rgba(111, 122, 0, .3);
+	--radius: 22px;
+	--neo-soft: 15px 15px 30px #ced3c3, -15px -15px 30px #ffffff;
+	--neo-inset: inset 6px 6px 12px #d4dacb, inset -6px -6px 12px #ffffff;
 }
 
 * {
@@ -44,13 +52,11 @@ html, body {
 
 body {
 	margin: 0;
-	font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+	font-family: Poppins, Nunito, system-ui, -apple-system, Segoe UI, Roboto, Arial,
 		sans-serif;
 	color: #111827;
-	background: radial-gradient(80rem 80rem at 20% -10%, var(--bg-3) 0%,
-		transparent 40%),
-		radial-gradient(80rem 80rem at 120% 120%, var(--bg-2) 0%, transparent
-		35%), linear-gradient(160deg, var(--bg-1), #7d7a00 60%, #8b8300 100%);
+	background: radial-gradient(900px 520px at -12% -12%, rgba(243, 201, 0, .2)
+		0%, transparent 56%), linear-gradient(165deg, #eff3e8 0%, #e5eadc 100%);
 	display: grid;
 	place-items: center;
 	padding: 32px;
@@ -71,12 +77,12 @@ body {
 }
 
 .brand {
-	background: rgba(255, 255, 255, .12);
-	backdrop-filter: blur(6px);
-	border: 1px solid rgba(255, 255, 255, .25);
+	background: var(--card);
+	box-shadow: var(--neo-soft);
+	border: 1px solid rgba(255, 255, 255, .9);
 	border-radius: var(--radius);
 	padding: clamp(24px, 4vw, 40px);
-	color: #fff;
+	color: #111827;
 	min-height: 420px;
 	display: flex;
 	align-items: center;
@@ -91,9 +97,9 @@ body {
 	display: inline-flex;
 	align-items: center;
 	gap: 10px;
-	background: rgba(255, 255, 255, .18);
-	border: 1px solid rgba(255, 255, 255, .35);
-	color: #fff;
+	background: #e5ebd5;
+	border: 1px solid rgba(111, 122, 0, .2);
+	color: #485100;
 	padding: 8px 12px;
 	border-radius: 999px;
 	font-weight: 600;
@@ -103,7 +109,7 @@ body {
 
 .brand h1 {
 	margin: 0 0 10px;
-	color: #fff;
+	color: #25301a;
 	font-weight: 800;
 	letter-spacing: .2px;
 	font-size: clamp(26px, 3vw, 34px)
@@ -111,17 +117,41 @@ body {
 
 .brand p {
 	margin: 0;
-	color: #fefce8;
-	opacity: .95;
+	color: #4b5563;
+	opacity: 1;
 	line-height: 1.6
 }
 
+.welcome-icon {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	margin-bottom: 10px;
+}
+
+.welcome-icon .lottie-box {
+	width: clamp(250px, 30vw, 360px);
+	height: clamp(250px, 30vw, 360px);
+	background: transparent !important;
+	border: 0;
+}
+
+.welcome-icon .lottie-box svg {
+	width: 100% !important;
+	height: 100% !important;
+	background: transparent !important;
+}
+
+.welcome-icon .lottie-box,
+.welcome-icon lord-icon {
+	filter: drop-shadow(0 12px 20px rgba(95, 106, 0, .18));
+}
 .card {
 	background: var(--card);
 	border-radius: var(--radius);
-	box-shadow: var(--shadow);
+	box-shadow: var(--neo-soft);
 	padding: clamp(22px, 3.8vw, 38px);
-	border: 1px solid #eef0f2;
+	border: 1px solid rgba(255, 255, 255, .9);
 }
 
 .logo {
@@ -180,17 +210,17 @@ input[type="text"], input[type="password"] {
 	width: 100%;
 	padding: 14px 44px 14px 14px;
 	border-radius: 14px;
-	border: 1px solid #e5e7eb;
-	background: #f8fafc;
+	border: 0;
+	background: #edf1e6;
+	box-shadow: var(--neo-inset);
 	outline: none;
 	transition: border .2s, box-shadow .2s, background .2s;
 	font-size: 15px;
 }
 
 input:focus {
-	background: #fff;
-	border-color: var(--olive);
-	box-shadow: 0 0 0 4px var(--ring)
+	background: #f3f6ec;
+	box-shadow: var(--neo-inset), 0 0 0 3px var(--ring)
 }
 
 .toggle {
@@ -217,11 +247,12 @@ input:focus {
 	font-weight: 700;
 	padding: 14px 18px;
 	border-radius: 999px;
-	background: linear-gradient(90deg, var(--olive), var(--gold));
-	color: #0b0f00;
+	background: linear-gradient(90deg, var(--olive), #8f9816 70%, var(--gold));
+	color: #202500;
 	font-size: 16px;
 	margin-top: 8px;
-	transition: filter .15s, transform .04s;
+	box-shadow: 6px 6px 14px rgba(111, 122, 0, .28), -4px -4px 12px rgba(255, 255, 255, .8);
+	transition: filter .15s, transform .04s, box-shadow .15s;
 }
 
 .primary:hover {
@@ -229,7 +260,8 @@ input:focus {
 }
 
 .primary:active {
-	transform: translateY(1px)
+	transform: translateY(1px);
+	box-shadow: inset 4px 4px 10px rgba(78, 86, 0, .35)
 }
 
 .links {
@@ -252,7 +284,7 @@ input:focus {
 
 .help {
 	margin-top: 24px;
-	border-top: 1px solid #eef0f2;
+	border-top: 1px solid #dde4cd;
 	padding-top: 18px;
 	text-align: center;
 	color: var(--muted);
@@ -270,21 +302,25 @@ input:focus {
 }
 </style>
 </head>
-<body>
+<body class="vt-auth-page">
 
-	<div class="wrap">
+	<div class="wrap vt-auth-shell">
 		<!-- Lado da marca/mensagem -->
-		<section class="brand">
+						<section class="brand vt-auth-brand">
 			<div class="brand-inner">
+				<div class="welcome-icon" style="justify-content:center;margin-bottom:4px;">
+					<div id="loginFriendsLottie" class="lottie-box" role="img" aria-label="Animação de amigos"></div>
+				</div>
+				<div class="vt-kicker mb-2">Bem-vindo de volta</div>
 				<h1>Rede de doadores com foco em simplicidade e transparência</h1>
 				<p>Plataforma leve, segura e pronta para crescer. Entre no escritório para gerenciar sua rede, acompanhar ciclos e apoiar sua comunidade.</p>
 			</div>
 		</section>
 
 		<!-- Cartão de login -->
-		<section class="card" aria-label="Acesso ao Escritório">
+		<section class="card vt-auth-card" aria-label="Acesso ao Escritório">
 			<div class="logo" align="center">
-				<img src="<c:url value='/resources/img/logo_horinzotal.png'/>" alt="Logo Vem Também" style="height: 150px;">
+				<img src="<c:url value='/resources/img/logo_horinzotal.png'/>" alt="Logo Vem Também" style="height: 188px; filter: drop-shadow(0 8px 16px rgba(75,84,0,.2));">
 			</div>
 			
 			<h2 align="center">Acesso ao Escritório</h2>
@@ -314,7 +350,7 @@ input:focus {
 							placeholder="sua senha" autocomplete="current-password"
 							required="required" />
 						<button class="toggle" type="button" aria-label="Mostrar senha"
-							onclick="togglePass()"></button>
+							onclick="togglePass()"><i class="fas fa-eye"></i></button>
 					</div>
 				</div>
 
@@ -339,6 +375,105 @@ input:focus {
 			const p = document.getElementById('pass');
 			p.type = p.type === 'password' ? 'text' : 'password';
 		}
+
+		document.addEventListener('DOMContentLoaded', function() {
+			if (!window.lottie || typeof window.lottie.loadAnimation !== 'function') {
+				return;
+			}
+
+			const container = document.getElementById('loginFriendsLottie');
+			if (!container) {
+				return;
+			}
+
+			function recolorLoginPalette(animationData) {
+				const palette = [
+					[0.929, 0.722, 0.039], // #edb80a
+					[0.569, 0.584, 0.176], // #91952d
+					[0.929, 0.722, 0.039], // #edb80a
+					[0.498, 0.514, 0.004]  // #7f8301
+				];
+				let paletteIndex = 0;
+
+				function isColorArray(value) {
+					return Array.isArray(value)
+						&& value.length === 4
+						&& value.every(function (n) { return typeof n === 'number' && n >= 0 && n <= 1; });
+				}
+
+				function shouldRecolor(rgb) {
+					const r = rgb[0], g = rgb[1], b = rgb[2];
+					const skinLike = r > 0.55 && g > 0.35 && b < 0.35;
+					const greenLike = g >= r + 0.06 && g >= b - 0.02;
+					const tealLike = g > 0.45 && b > 0.35 && r < 0.4;
+					return !skinLike && (greenLike || tealLike);
+				}
+
+				function isNearWhite(rgb) {
+					return rgb[0] > 0.94 && rgb[1] > 0.94 && rgb[2] > 0.94;
+				}
+
+				function walk(node) {
+					if (!node) {
+						return;
+					}
+					if (isColorArray(node)) {
+						if (isNearWhite(node)) {
+							node[3] = 0;
+							return;
+						}
+						if (shouldRecolor(node)) {
+							const next = palette[paletteIndex % palette.length];
+							paletteIndex += 1;
+							node[0] = next[0];
+							node[1] = next[1];
+							node[2] = next[2];
+						}
+						return;
+					}
+					if (Array.isArray(node)) {
+						node.forEach(walk);
+						return;
+					}
+					if (typeof node === 'object') {
+						Object.keys(node).forEach(function (key) { walk(node[key]); });
+					}
+				}
+
+				walk(animationData);
+				return animationData;
+			}
+
+			const animationPath = '<c:url value="/resources/vendor/lottie/animations/watering-plants.json"/>';
+			fetch(animationPath)
+				.then(function (response) { return response.json(); })
+				.then(function (animationData) {
+					window.lottie.loadAnimation({
+						container: container,
+						renderer: 'svg',
+						loop: true,
+						autoplay: true,
+						animationData: recolorLoginPalette(animationData),
+						rendererSettings: { preserveAspectRatio: 'xMidYMid meet' }
+					});
+				})
+				.catch(function () {
+					window.lottie.loadAnimation({
+						container: container,
+						renderer: 'svg',
+						loop: true,
+						autoplay: true,
+						path: animationPath,
+						rendererSettings: { preserveAspectRatio: 'xMidYMid meet' }
+					});
+				});
+		});
 	</script>
+	<script type="text/javascript" src="<c:url value='/resources/vendor/lottie/lottie.min.js'/>"></script>
+	<script type="text/javascript" src="<c:url value='/resources/js/vt-core.js'/>"></script>
 </body>
 </html>
+
+
+
+

@@ -3,6 +3,7 @@ package br.com.vemtambem.dao;
 import java.util.List;
 
 import br.com.vemtambem.model.Ciclo;
+import br.com.vemtambem.model.RedePosicaoPreview;
 
 public interface CicloDAO {
 
@@ -19,5 +20,9 @@ public interface CicloDAO {
 	public List<Ciclo> pesquisarCiclosUsuariosDonatarios(String login);
 	
 	public Ciclo getCicloAtivoPorLogin(String login);
+
+	public RedePosicaoPreview pesquisarPosicaoUsuarioNaRede(Long idUsuario);
+
+	public int vincularTipoCicloPadraoEmCiclosSemTipo(Long idTipoCicloPadrao);
 	
 }

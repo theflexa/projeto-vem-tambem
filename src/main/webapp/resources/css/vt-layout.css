@@ -1,0 +1,107 @@
+.vt-auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+  background:
+    radial-gradient(70rem 70rem at 18% -12%, rgba(216, 222, 161, 0.6) 0%, transparent 46%),
+    radial-gradient(70rem 70rem at 115% 108%, rgba(243, 201, 0, 0.5) 0%, transparent 42%),
+    linear-gradient(155deg, #f2f5ea 0%, #e7ecde 58%, #dde4cc 100%);
+}
+
+.vt-auth-shell {
+  width: min(1100px, 100%);
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 28px;
+}
+
+.vt-auth-brand {
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: #edf1e6;
+  box-shadow: 14px 14px 28px #ccd3c0, -14px -14px 28px #ffffff;
+  padding: clamp(24px, 4vw, 42px);
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+}
+
+.vt-auth-brand h1 {
+  margin: 0 0 10px;
+  font-size: clamp(1.65rem, 3vw, 2.3rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.vt-auth-brand p {
+  margin: 0;
+  color: #4b5563;
+}
+
+.vt-auth-card {
+  background: #edf1e6;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 14px 14px 28px #ccd3c0, -14px -14px 28px #ffffff;
+  padding: clamp(22px, 3.8vw, 38px);
+}
+
+.vt-page-intro {
+  border-radius: 24px;
+  border: 1px solid rgba(34, 84, 61, 0.1);
+  background: linear-gradient(160deg, #ffffff, #f9fbf2);
+  box-shadow: 0 10px 25px rgba(31, 41, 55, 0.08);
+  padding: 1rem 1.2rem;
+}
+
+.vt-page-intro h1,
+.vt-page-intro .h3 {
+  margin: 0 0 6px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.vt-page-intro p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.vt-topbar {
+  border-radius: 0;
+}
+
+.vt-shell-card {
+  border-radius: 22px;
+  border: 1px solid rgba(34, 84, 61, 0.1);
+  box-shadow: 0 10px 25px rgba(31, 41, 55, 0.08);
+}
+
+.vt-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.vt-dashboard-col-4 {
+  grid-column: span 4 / span 4;
+}
+
+.vt-dashboard-col-6 {
+  grid-column: span 6 / span 6;
+}
+
+.vt-dashboard-col-12 {
+  grid-column: span 12 / span 12;
+}
+
+@media (max-width: 991.98px) {
+  .vt-auth-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .vt-dashboard-col-4,
+  .vt-dashboard-col-6 {
+    grid-column: span 12 / span 12;
+  }
+}

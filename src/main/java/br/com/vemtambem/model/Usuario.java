@@ -98,6 +98,9 @@ public class Usuario {
 	@Column(name = "comprovante_deposito")
 	private String comprovanteDeposito;
 
+	@Column(name = "motivo_recusa_ativacao", length = 600)
+	private String motivoRecusaAtivacao;
+
 	// Atributos referente a árvore.
 
 	@ManyToOne
@@ -134,8 +137,14 @@ public class Usuario {
 	}
 
 	public String getWhatsappFormat() {
-	    String whatsappSemFormato = this.whatsapp.replaceAll("[\\s\\(\\)-]", "");
-		return "55"+whatsappSemFormato;
+		if (this.whatsapp == null || this.whatsapp.trim().isEmpty()) {
+			return "";
+		}
+		String whatsappSemFormato = this.whatsapp.replaceAll("\\D", "");
+		if (whatsappSemFormato.startsWith("55")) {
+			return whatsappSemFormato;
+		}
+		return "55" + whatsappSemFormato;
 	}
 	
 	public String getNomeCurto() {

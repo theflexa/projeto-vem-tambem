@@ -4,7 +4,9 @@
       "Bash(git push:*)",
       "Bash(winget install:*)",
       "Bash(\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" auth status)",
-      "Bash(\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" auth login --web --git-protocol https)"
+      "Bash(\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" auth login --web --git-protocol https)",
+      "Bash(git -C \"C:\\\\Users\\\\Guilherme Flexa\\\\Documents\\\\Software pai\\\\vemtambem\\\\.claude\\\\worktrees\\\\elastic-roentgen\" diff --name-only HEAD~1)",
+      "Bash(git -C \"C:\\\\Users\\\\Guilherme Flexa\\\\Documents\\\\Software pai\\\\vemtambem\\\\.claude\\\\worktrees\\\\elastic-roentgen\" status --short)"
     ]
   }
 }

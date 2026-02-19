@@ -120,6 +120,56 @@ vtToast('Mensagem', 'success');  // variantes: success, error, info, warning
 ```
 Posicionado no topo-direita, auto-dismiss em 4s, com stacking vertical.
 
+### Lottie (padrao do projeto)
+
+**Objetivo:** usar animacoes sem depender de embed externo, evitando bloqueio de iframe (`sub-frame-error`).
+
+#### Regra principal
+- **Nao usar iframe do LottieFiles** (`https://lottiefiles.com/...`) em telas do projeto.
+- Sempre usar **arquivo local JSON** + `lottie-web` local.
+
+#### Onde ficam os arquivos
+- Biblioteca JS:
+  - `src/main/webapp/resources/vendor/lottie/lottie.min.js`
+- Animacoes:
+  - `src/main/webapp/resources/vendor/lottie/animations/*.json`
+- Exemplo atual:
+  - `friends.json` (login)
+  - `walking-pothos.json` (loader global/transicao)
+
+#### Como adicionar um novo Lottie
+1. Baixar o JSON da animacao.
+2. Salvar em `resources/vendor/lottie/animations/` com nome sem espacos, ex: `meu-loader.json`.
+3. Referenciar por URL local na JSP/JS:
+   - JSP: `<c:url value='/resources/vendor/lottie/animations/meu-loader.json'/>`
+   - JS global (`vt-core.js`): `resolveAssetPath("/resources/vendor/lottie/animations/meu-loader.json")`
+
+#### Login (animacao de destaque)
+- Container do Lottie: `#loginFriendsLottie` em `index.jsp`.
+- Inicializacao com `window.lottie.loadAnimation(...)` em `index.jsp`.
+- Script local do player:
+  - `<script src="<c:url value='/resources/vendor/lottie/lottie.min.js'/>"></script>`
+
+#### Loader global e transicao de paginas
+- Implementado em `src/main/webapp/resources/js/vt-core.js`:
+  - Cria overlay `.vt-global-loader`
+  - Carrega `walking-pothos.json`
+  - Mostra no carregamento inicial
+  - Mostra tambem em clique de link e submit de form (transicao entre paginas)
+- Para desativar em casos pontuais:
+  - Link/form: usar `data-no-loader`
+  - Pagina inteira: adicionar `vt-no-global-loader` no `body`
+
+#### Paleta visual (importante)
+- **Nao aplicar `hue-rotate` global no SVG do Lottie** quando houver personagens (pode deixar pele verde).
+- Para harmonizar com a marca, estilizar o **container** (fundo, borda, glow), nao as cores internas da animacao.
+
+#### Checklist rapido de validacao
+1. Lottie renderiza sem erro no console (sem bloqueio de dominio).
+2. Login carrega animacao local corretamente.
+3. Loader aparece ao navegar por link interno e ao enviar formulario.
+4. Hard refresh (`Ctrl+F5`) para validar cache apos troca de assets.
+
 ---
 
 ## Entidades Principais
@@ -438,6 +488,13 @@ public static final String URL = "jdbc:mysql://sergi6131.c44.integrator.host:330
 ---
 
 ## Para Fazer Alteracoes
+
+### Regra obrigatoria (IA/Codex)
+- **Sempre ao finalizar qualquer alteracao no codigo, executar build Docker local:**
+  ```bash
+  docker compose up --build
+  ```
+- Esta regra vale para alteracoes em frontend, JSP, backend Java e configuracoes.
 
 ### Frontend (CSS, JS, imagens)
 - Editar em `src/main/webapp/resources/`

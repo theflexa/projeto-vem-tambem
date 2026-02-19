@@ -24,11 +24,19 @@
   <link href="${sbadmin2mincss}" rel="stylesheet"/>
   <spring:url value="/resources/css/vt-theme.css" var="vtthemecss" />
   <link href="${vtthemecss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-layout.css" var="vtlayoutcss" />
+  <link href="${vtlayoutcss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-components.css" var="vtcomponentscss" />
+  <link href="${vtcomponentscss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-tour.css" var="vttourcss" />
+  <link href="${vttourcss}" rel="stylesheet"/>
+  <spring:url value="/resources/vendor/introjs/introjs.min.css" var="introcss" />
+  <link href="${introcss}" rel="stylesheet"/>
 
   <spring:url value="/resources/vendor/datatables/dataTables.bootstrap4.min.css" var="dtcss" />
   <link href="${dtcss}" rel="stylesheet"/>
 </head>
-<body id="page-top">
+<body id="page-top" data-user-id="${usuarioLogado.id}">
 
 <c:set var="cp" value="${pageContext.request.contextPath}" />
 
@@ -39,17 +47,7 @@
   <!-- Content -->
   <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
-      <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow-sm">
-        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-2" aria-label="Abrir menu"><i class="fa fa-bars"></i></button>
-        <ul class="navbar-nav ml-auto">
-          <div class="topbar-divider d-none d-sm-block"></div>
-          <li class="nav-item dropdown no-arrow">
-            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="mr-2 d-sm-inline text-gray-700 small"><i class="fas fa-user-circle"></i> ${usuarioLogado.nome}</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+      <jsp:include page="/WEB-INF/includes/topbar.jsp" />
 
       <div class="container-fluid">
         <div class="content-surface mb-3">
@@ -65,7 +63,7 @@
             </c:if>
           </div>
           <!-- Barra de progresso -->
-          <div class="mt-3">
+          <div class="mt-3" data-tour-id="doadores-progress">
             <div class="d-flex justify-content-between mb-1">
               <small class="font-weight-bold" style="color:var(--ink)">Progresso do ciclo</small>
               <small class="font-weight-bold" style="color:var(--ink)">${pessoa.quantDoacoesRecebidas}/8 doações</small>
@@ -95,7 +93,7 @@
           <!-- Título + Abas -->
           <div class="card-header">
             <h6 class="m-0 font-weight-bold text-brand">Painel de Doadores por ciclo</h6>
-            <ul class="nav nav-tabs" id="doadoresTab" role="tablist">
+            <ul class="nav nav-tabs vt-vaadin-tabs" id="doadoresTab" role="tablist" data-tour-id="doadores-tabs">
               <c:forEach var="aba" items="${ciclos}" varStatus="status">
                 <li class="nav-item">
                   <a class="nav-link ${aba.ativo ? 'active' : ''}"
@@ -138,7 +136,7 @@
                   </c:if>
 
                   <!-- Tabela -->
-                  <div class="table-responsive">
+                  <div class="table-responsive" data-tour-id="doadores-table">
                     <table class="table align-middle table-brand-stripe">
                       <thead>
                         <tr>
@@ -175,10 +173,10 @@
 					                   and not empty n and fn:length(fn:trim(n)) > 0}">
 					        <span class="text-danger" title="Pendente"><i class="fas fa-clock"></i></span>
 					      </c:if>
-					      <c:if test="${aba.indicadoEsquerda.indicadoEsquerda.indicadoEsquerda.doacaoFeita == false
-					                   and aba.indicadoEsquerda.indicadoEsquerda.indicadoEsquerda.comprovanteDeposito != null}">
-					        <button id="btnAtivar1" class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoEsquerda.indicadoEsquerda.indicadoEsquerda.id}, 'btnAtivar1')">Ativar</button>
-					      </c:if>
+						      <c:if test="${aba.indicadoEsquerda.indicadoEsquerda.indicadoEsquerda.doacaoFeita == false
+						                   and aba.indicadoEsquerda.indicadoEsquerda.indicadoEsquerda.comprovanteDeposito != null}">
+						        <button class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoEsquerda.indicadoEsquerda.indicadoEsquerda.id}, this)">Ativar</button>
+						      </c:if>
 					    </td>
 					  </tr>
 
@@ -207,10 +205,10 @@
 					                   and not empty n and fn:length(fn:trim(n)) > 0}">
 					        <span class="text-danger" title="Pendente"><i class="fas fa-clock"></i></span>
 					      </c:if>
-					      <c:if test="${aba.indicadoEsquerda.indicadoEsquerda.indicadoDireita.doacaoFeita == false
-					                   and aba.indicadoEsquerda.indicadoEsquerda.indicadoDireita.comprovanteDeposito != null}">
-					        <button id="btnAtivar2" class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoEsquerda.indicadoEsquerda.indicadoDireita.id}, 'btnAtivar2')">Ativar</button>
-					      </c:if>
+						      <c:if test="${aba.indicadoEsquerda.indicadoEsquerda.indicadoDireita.doacaoFeita == false
+						                   and aba.indicadoEsquerda.indicadoEsquerda.indicadoDireita.comprovanteDeposito != null}">
+						        <button class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoEsquerda.indicadoEsquerda.indicadoDireita.id}, this)">Ativar</button>
+						      </c:if>
 					    </td>
 					  </tr>
 
@@ -239,10 +237,10 @@
 					                   and not empty n and fn:length(fn:trim(n)) > 0}">
 					        <span class="text-danger" title="Pendente"><i class="fas fa-clock"></i></span>
 					      </c:if>
-					      <c:if test="${aba.indicadoEsquerda.indicadoDireita.indicadoEsquerda.doacaoFeita == false
-					                   and aba.indicadoEsquerda.indicadoDireita.indicadoEsquerda.comprovanteDeposito != null}">
-					        <button id="btnAtivar3" class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoEsquerda.indicadoDireita.indicadoEsquerda.id}, 'btnAtivar3')">Ativar</button>
-					      </c:if>
+						      <c:if test="${aba.indicadoEsquerda.indicadoDireita.indicadoEsquerda.doacaoFeita == false
+						                   and aba.indicadoEsquerda.indicadoDireita.indicadoEsquerda.comprovanteDeposito != null}">
+						        <button class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoEsquerda.indicadoDireita.indicadoEsquerda.id}, this)">Ativar</button>
+						      </c:if>
 					    </td>
 					  </tr>
 
@@ -271,10 +269,10 @@
 					                   and not empty n and fn:length(fn:trim(n)) > 0}">
 					        <span class="text-danger" title="Pendente"><i class="fas fa-clock"></i></span>
 					      </c:if>
-					      <c:if test="${aba.indicadoEsquerda.indicadoDireita.indicadoDireita.doacaoFeita == false
-					                   and aba.indicadoEsquerda.indicadoDireita.indicadoDireita.comprovanteDeposito != null}">
-					        <button id="btnAtivar4" class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoEsquerda.indicadoDireita.indicadoDireita.id}, 'btnAtivar4')">Ativar</button>
-					      </c:if>
+						      <c:if test="${aba.indicadoEsquerda.indicadoDireita.indicadoDireita.doacaoFeita == false
+						                   and aba.indicadoEsquerda.indicadoDireita.indicadoDireita.comprovanteDeposito != null}">
+						        <button class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoEsquerda.indicadoDireita.indicadoDireita.id}, this)">Ativar</button>
+						      </c:if>
 					    </td>
 					  </tr>
 
@@ -303,10 +301,10 @@
 					                   and not empty n and fn:length(fn:trim(n)) > 0}">
 					        <span class="text-danger" title="Pendente"><i class="fas fa-clock"></i></span>
 					      </c:if>
-					      <c:if test="${aba.indicadoDireita.indicadoEsquerda.indicadoEsquerda.doacaoFeita == false
-					                   and aba.indicadoDireita.indicadoEsquerda.indicadoEsquerda.comprovanteDeposito != null}">
-					        <button id="btnAtivar5" class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoDireita.indicadoEsquerda.indicadoEsquerda.id}, 'btnAtivar5')">Ativar</button>
-					      </c:if>
+						      <c:if test="${aba.indicadoDireita.indicadoEsquerda.indicadoEsquerda.doacaoFeita == false
+						                   and aba.indicadoDireita.indicadoEsquerda.indicadoEsquerda.comprovanteDeposito != null}">
+						        <button class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoDireita.indicadoEsquerda.indicadoEsquerda.id}, this)">Ativar</button>
+						      </c:if>
 					    </td>
 					  </tr>
 
@@ -335,10 +333,10 @@
 					                   and not empty n and fn:length(fn:trim(n)) > 0}">
 					        <span class="text-danger" title="Pendente"><i class="fas fa-clock"></i></span>
 					      </c:if>
-					      <c:if test="${aba.indicadoDireita.indicadoEsquerda.indicadoDireita.doacaoFeita == false
-					                   and aba.indicadoDireita.indicadoEsquerda.indicadoDireita.comprovanteDeposito != null}">
-					        <button id="btnAtivar6" class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoDireita.indicadoEsquerda.indicadoDireita.id}, 'btnAtivar6')">Ativar</button>
-					      </c:if>
+						      <c:if test="${aba.indicadoDireita.indicadoEsquerda.indicadoDireita.doacaoFeita == false
+						                   and aba.indicadoDireita.indicadoEsquerda.indicadoDireita.comprovanteDeposito != null}">
+						        <button class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoDireita.indicadoEsquerda.indicadoDireita.id}, this)">Ativar</button>
+						      </c:if>
 					    </td>
 					  </tr>
 
@@ -367,10 +365,10 @@
 					                   and not empty n and fn:length(fn:trim(n)) > 0}">
 					        <span class="text-danger" title="Pendente"><i class="fas fa-clock"></i></span>
 					      </c:if>
-					      <c:if test="${aba.indicadoDireita.indicadoDireita.indicadoEsquerda.doacaoFeita == false
-					                   and aba.indicadoDireita.indicadoDireita.indicadoEsquerda.comprovanteDeposito != null}">
-					        <button id="btnAtivar7" class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoDireita.indicadoDireita.indicadoEsquerda.id}, 'btnAtivar7')">Ativar</button>
-					      </c:if>
+						      <c:if test="${aba.indicadoDireita.indicadoDireita.indicadoEsquerda.doacaoFeita == false
+						                   and aba.indicadoDireita.indicadoDireita.indicadoEsquerda.comprovanteDeposito != null}">
+						        <button class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoDireita.indicadoDireita.indicadoEsquerda.id}, this)">Ativar</button>
+						      </c:if>
 					    </td>
 					  </tr>
 
@@ -399,10 +397,10 @@
 					                   and not empty n and fn:length(fn:trim(n)) > 0}">
 					        <span class="text-danger" title="Pendente"><i class="fas fa-clock"></i></span>
 					      </c:if>
-					      <c:if test="${aba.indicadoDireita.indicadoDireita.indicadoDireita.doacaoFeita == false
-					                   and aba.indicadoDireita.indicadoDireita.indicadoDireita.comprovanteDeposito != null}">
-					        <button id="btnAtivar8" class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoDireita.indicadoDireita.indicadoDireita.id}, 'btnAtivar8')">Ativar</button>
-					      </c:if>
+						      <c:if test="${aba.indicadoDireita.indicadoDireita.indicadoDireita.doacaoFeita == false
+						                   and aba.indicadoDireita.indicadoDireita.indicadoDireita.comprovanteDeposito != null}">
+						        <button class="btn btn-olive btn-sm" onclick="ativarPessoa(${aba.indicadoDireita.indicadoDireita.indicadoDireita.id}, this)">Ativar</button>
+						      </c:if>
 					    </td>
 					  </tr>
 					</tbody>
@@ -431,22 +429,8 @@
 <!-- Scroll to Top -->
 <a class="scroll-to-top rounded" href="#page-top" aria-label="Voltar ao topo"><i class="fas fa-angle-up"></i></a>
 
-<!-- Logout Modal -->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutTitle" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="logoutTitle">Sair</h5>
-        <button class="close" type="button" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body">Deseja encerrar a sessão atual?</div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-        <a class="btn btn-primary" href="${cp}/sair">Sair</a>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- Global Modals -->
+<jsp:include page="/WEB-INF/includes/global-modals.jsp" />
 
 <!-- JS -->
 <script type="text/javascript" src="<c:url value='/resources/vendor/jquery/jquery.min.js'/>"></script>
@@ -459,14 +443,22 @@
 
 <script>
   function downloadComprovante(pessoaId){
-    window.location.href = '${cp}/usuario/comprovante/download-comprovante-doacao/' + pessoaId;
+    var url = '${cp}/usuario/comprovante/download-comprovante-doacao/' + pessoaId;
+    var newTab = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!newTab) {
+      window.location.href = url;
+    }
   }
 
-  function ativarPessoa(pessoaId, btnId){
-    var btn = document.getElementById(btnId);
-    if(btn){ btn.disabled = true; btn.innerText = 'Ativando...'; }
-    window.location.href = '${cp}/usuario/ativar-doador?id=' + pessoaId;
-  }
+	  function ativarPessoa(pessoaId, btn){
+	    if(btn){ btn.disabled = true; btn.innerText = 'Ativando...'; }
+	    window.location.href = '${cp}/usuario/ativar-doador?id=' + pessoaId;
+	  }
 </script>
+<script type="text/javascript" src="<c:url value='/resources/vendor/introjs/intro.min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/vendor/lordicon/lordicon.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-core.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-icons.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-tour.js'/>"></script>
 </body>
 </html>

@@ -1,0 +1,145 @@
+.introjs-tooltip {
+  border-radius: 16px !important;
+  border: 1px solid rgba(75, 84, 0, 0.18) !important;
+  box-shadow: 0 16px 30px rgba(47, 58, 7, 0.22) !important;
+}
+
+.introjs-tooltiptext {
+  color: #374151 !important;
+  font-size: 0.95rem !important;
+  line-height: 1.45 !important;
+}
+
+.introjs-tooltip-title {
+  color: #374151 !important;
+  font-weight: 900 !important;
+}
+
+.introjs-tooltipbuttons,
+.introjs-tooltipbuttons li {
+  list-style: none !important;
+  list-style-type: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.introjs-tooltipbuttons {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+}
+
+.introjs-tooltipbuttons li::marker,
+.introjs-tooltipbuttons li::before,
+.introjs-tooltipbuttons a::before,
+.introjs-tooltipbuttons a::after {
+  content: none !important;
+  display: none !important;
+}
+
+.introjs-button {
+  border-radius: 999px !important;
+  border: 0 !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  font-weight: 800 !important;
+  padding: 0.42rem 0.92rem !important;
+}
+
+.introjs-nextbutton,
+.introjs-donebutton {
+  background: linear-gradient(90deg, #6f7a00, #8f9917 70%, #f3c900) !important;
+  color: #232700 !important;
+}
+
+.introjs-prevbutton {
+  background: #edf2de !important;
+  color: #4b5400 !important;
+}
+
+.introjs-skipbutton {
+  display: inline-flex !important;
+  align-items: center !important;
+  color: #6b7280 !important;
+  text-decoration: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.introjs-skipbutton::before {
+  content: none !important;
+  display: none !important;
+}
+
+.introjs-skipbutton::after {
+  content: none !important;
+  display: none !important;
+}
+
+.vt-tutorial-trigger {
+  position: relative;
+}
+
+.vt-tour-hint-active #vtTutorialAction {
+  position: relative;
+  z-index: 1055;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.96), 0 0 0 10px rgba(111, 122, 0, 0.52), 0 12px 22px rgba(47, 58, 7, 0.23);
+  animation: vtHintPulse 1.2s ease infinite;
+}
+
+.vt-tour-hint-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  backdrop-filter: blur(3px);
+  background: rgba(19, 28, 9, 0.42);
+}
+
+.vt-tour-hint-bubble {
+  position: fixed;
+  z-index: 1056;
+  max-width: 260px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(75, 84, 0, 0.16);
+  box-shadow: 0 16px 30px rgba(47, 58, 7, 0.25);
+  padding: 0.8rem 0.95rem;
+  color: #374151;
+  font-size: 0.88rem;
+}
+
+.vt-tour-hint-bubble strong {
+  display: block;
+  color: #1f2937;
+  margin-bottom: 0.2rem;
+}
+
+.vt-tour-hint-bubble::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-right: 1px solid rgba(75, 84, 0, 0.16);
+  border-bottom: 1px solid rgba(75, 84, 0, 0.16);
+  transform: rotate(45deg);
+  top: -7px;
+  right: 20px;
+}
+
+@keyframes vtHintPulse {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vt-tour-hint-active #vtTutorialAction {
+    animation: none !important;
+  }
+}

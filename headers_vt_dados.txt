@@ -1,0 +1,5 @@
+HTTP/1.1 302 
+Location: /vemtambem
+Content-Length: 0
+Date: Wed, 18 Feb 2026 17:46:45 GMT
+

@@ -33,6 +33,14 @@ public class TipoCicloDAOImpl implements TipoCicloDAO {
 		return criteria.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoCiclo> listarTodosOrdenados() {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TipoCiclo.class);
+		criteria.addOrder(Order.asc("ordem"));
+		return criteria.list();
+	}
+
 	@Override
 	public TipoCiclo pesquisarPorOrdem(int ordem) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TipoCiclo.class);

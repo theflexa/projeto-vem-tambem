@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Locale;
 
 import br.com.vemtambem.model.TipoCiclo;
 import br.com.vemtambem.model.Usuario;
@@ -29,6 +30,10 @@ public class HomeController {
 	@Autowired
 	private TipoCicloService tipoCicloService;
 
+	private static final String JORNADA_SEMENTE = "Jornada da Semente";
+	private static final String JORNADA_JARDIM = "Jornada do Jardim";
+	private static final String JORNADA_FLORESTA = "Jornada da Floresta";
+
 	@RequestMapping(value = "/")
 	public ModelAndView home(ModelAndView model) throws IOException {
 		model.setViewName("index");
@@ -37,18 +42,72 @@ public class HomeController {
 
 	@RequestMapping(value = "/painel")
 	public ModelAndView painel(ModelAndView model, HttpServletRequest request) throws IOException {
-		List<TipoCiclo> tiposCiclo = tipoCicloService.listarAtivos();
-		TipoCiclo tipoCicloAtual = tiposCiclo.isEmpty() ? null : tiposCiclo.get(0);
-		model.addObject("tipoCicloAtual", tipoCicloAtual);
-
 		Long idUsuario = (Long) request.getSession().getAttribute("idUsuarioLogado");
 		if (idUsuario != null) {
 			Usuario usuarioLogado = usuarioService.pesquisarPorId(idUsuario);
+			request.getSession().setAttribute("usuarioLogado", usuarioLogado);
 			model.addObject("pessoa", usuarioLogado);
+			if (usuarioLogado != null && usuarioLogado.isAdmin()) {
+				model.setViewName("redirect:/admin/dashboard");
+				return model;
+			}
 		}
+
+		List<TipoCiclo> tiposCiclo = tipoCicloService.listarAtivos();
+		normalizarNomesTipoCiclo(tiposCiclo);
+		TipoCiclo tipoCicloAtual = tiposCiclo.isEmpty() ? null : tiposCiclo.get(0);
+		model.addObject("tipoCicloAtual", tipoCicloAtual);
+		model.addObject("nomeJornadaAtual", obterNomeJornadaAtual(tipoCicloAtual));
 
 		model.setViewName("painel");
 		return model;
+	}
+
+	private void normalizarNomesTipoCiclo(List<TipoCiclo> tiposCiclo) {
+		if (tiposCiclo == null || tiposCiclo.isEmpty()) {
+			return;
+		}
+		for (TipoCiclo tipoCiclo : tiposCiclo) {
+			if (tipoCiclo == null) {
+				continue;
+			}
+			tipoCiclo.setNome(mapearNomeJornada(tipoCiclo.getNome()));
+		}
+	}
+
+	private String obterNomeJornadaAtual(TipoCiclo tipoCicloAtual) {
+		if (tipoCicloAtual == null) {
+			return JORNADA_SEMENTE;
+		}
+		return mapearNomeJornada(tipoCicloAtual.getNome());
+	}
+
+	private String mapearNomeJornada(String nomeOriginal) {
+		if (nomeOriginal == null || nomeOriginal.trim().isEmpty()) {
+			return JORNADA_SEMENTE;
+		}
+
+		String nome = nomeOriginal.trim();
+		String nomeLower = nome.toLowerCase(Locale.ROOT);
+		if ("tabuleiro 1".equals(nomeLower)) {
+			return JORNADA_SEMENTE;
+		}
+		if ("tabuleiro 2".equals(nomeLower)) {
+			return JORNADA_JARDIM;
+		}
+		if ("tabuleiro 3".equals(nomeLower)) {
+			return JORNADA_FLORESTA;
+		}
+		if ("jornada da semente".equals(nomeLower)) {
+			return JORNADA_SEMENTE;
+		}
+		if ("jornada do jardim".equals(nomeLower)) {
+			return JORNADA_JARDIM;
+		}
+		if ("jornada da floresta".equals(nomeLower)) {
+			return JORNADA_FLORESTA;
+		}
+		return nome;
 	}
 
 	@RequestMapping(value = "/onboarding")

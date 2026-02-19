@@ -10,6 +10,8 @@ public interface TipoCicloDAO {
 
 	List<TipoCiclo> listarAtivos();
 
+	List<TipoCiclo> listarTodosOrdenados();
+
 	TipoCiclo pesquisarPorOrdem(int ordem);
 
 	void salvar(TipoCiclo tipoCiclo);

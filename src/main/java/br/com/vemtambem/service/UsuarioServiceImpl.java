@@ -181,10 +181,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 		// usuário que está sendo ativado
 		Usuario usuario = usuarioDAO.pesquisarPorId(idUsuario);
 		usuario.setAtivo(true);
+		usuario.setMotivoRecusaAtivacao(null);
 		usuario.setQuantCiclos(usuario.getQuantCiclos() + 1);
 
 		Usuario indicadorDireto = null;
-		if (usuario.getLogin().equals("vemtambem")) {
+		if ("vemtambem".equalsIgnoreCase(usuario.getLogin())) {
 
 			// inserir o novo usuário à árvore do indicador
 			indicadorDireto = this.inserirIndicado(usuario.getIndicador(), usuario);
@@ -227,6 +228,22 @@ public class UsuarioServiceImpl implements UsuarioService {
 		cicloDAO.salvar(ciclo);
 
 		usuario.setCicloAtivo(ciclo);
+		usuarioDAO.salvar(usuario);
+	}
+
+	@Override
+	@Transactional
+	public void recusarAtivacao(Long idUsuario, String motivoRecusa) {
+		Usuario usuario = usuarioDAO.pesquisarPorId(idUsuario);
+		if (usuario == null) {
+			return;
+		}
+
+		usuario.setAtivo(false);
+		usuario.setMotivoRecusaAtivacao(motivoRecusa);
+		usuario.setComprovanteAtivacao(null);
+		usuario.setComprovanteDeposito(null);
+		usuario.setDoacaoFeita(false);
 		usuarioDAO.salvar(usuario);
 	}
 

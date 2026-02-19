@@ -32,7 +32,11 @@ public class LoginController {
 			session.setAttribute("idUsuarioLogado", usuarioLogado.getId());
 			
 			model.addObject("sucesso", Boolean.TRUE);
-			model.setViewName("painel");
+			if (usuarioLogado.isAdmin()) {
+				model.setViewName("redirect:/admin/dashboard");
+			} else {
+				model.setViewName("redirect:/painel");
+			}
 			return model;
 		}
 		

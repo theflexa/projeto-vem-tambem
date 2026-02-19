@@ -10,8 +10,12 @@ public interface TipoCicloService {
 
 	List<TipoCiclo> listarAtivos();
 
+	List<TipoCiclo> listarTodosOrdenados();
+
 	TipoCiclo pesquisarPorOrdem(int ordem);
 
 	void salvar(TipoCiclo tipoCiclo);
+
+	void garantirJornadasPadraoEVinculoCiclos();
 
 }

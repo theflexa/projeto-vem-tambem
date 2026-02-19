@@ -17,7 +17,20 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	@Transactional
 	public Usuario realizarLogin(String login, String senha) {
-		return usuarioDAO.pesquisarPorLoginSenha(login, SenhaUtils.convertStringToMd5(senha));
+		String loginNormalizado = login == null ? "" : login.trim();
+		String senhaHash = SenhaUtils.convertStringToMd5(senha);
+
+		Usuario usuario = usuarioDAO.pesquisarPorLoginSenha(loginNormalizado, senhaHash);
+		if (usuario != null) {
+			return usuario;
+		}
+
+		// Compatibilidade: login legado "vemtambem" deve autenticar no usuário administrativo.
+		if ("vemtambem".equalsIgnoreCase(loginNormalizado)) {
+			return usuarioDAO.pesquisarPorLoginSenha("admin", senhaHash);
+		}
+
+		return null;
 	}
 
 }

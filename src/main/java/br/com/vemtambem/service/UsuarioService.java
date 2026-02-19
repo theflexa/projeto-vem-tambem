@@ -30,6 +30,8 @@ public interface UsuarioService {
 
 	public void ativar(Long idPessoa);
 
+	public void recusarAtivacao(Long idPessoa, String motivoRecusa);
+
 	public void ativarDoador(Long idUsuarioAtivacao);
 
 	public List<Usuario> recuperarDoadores(Usuario usuarioLogado);

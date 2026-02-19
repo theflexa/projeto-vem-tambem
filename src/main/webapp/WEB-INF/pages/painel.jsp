@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -25,8 +25,16 @@
   <link href="${sbadmin2mincss}" rel="stylesheet"/>
   <spring:url value="/resources/css/vt-theme.css" var="vtthemecss" />
   <link href="${vtthemecss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-layout.css" var="vtlayoutcss" />
+  <link href="${vtlayoutcss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-components.css" var="vtcomponentscss" />
+  <link href="${vtcomponentscss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-tour.css" var="vttourcss" />
+  <link href="${vttourcss}" rel="stylesheet"/>
+  <spring:url value="/resources/vendor/introjs/introjs.min.css" var="introcss" />
+  <link href="${introcss}" rel="stylesheet"/>
 </head>
-<body id="page-top">
+<body id="page-top" data-user-id="${usuarioLogado.id}">
 
 <div id="wrapper">
   <!-- Sidebar -->
@@ -37,72 +45,33 @@
     <div id="content">
 
       <!-- Topbar -->
-      <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow-sm">
-        <!-- Mobile: abre sidebar -->
-        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-2"><i class="fa fa-bars"></i></button>
-
-        <ul class="navbar-nav ml-auto">
-          <div class="topbar-divider d-none d-sm-block"></div>
-          <!-- Usuário -->
-          <li class="nav-item dropdown no-arrow">
-            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="mr-2 d-sm-inline text-gray-700 small"><i class="fas fa-user-circle"></i> ${usuarioLogado.nome}</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+      <jsp:include page="/WEB-INF/includes/topbar.jsp" />
       <!-- /Topbar -->
 
       <!-- Conteúdo -->
       <div class="container-fluid">
-        <div class="content-surface mb-4">
+        <c:set var="jornadaAtual" value="${empty nomeJornadaAtual ? 'Jornada da Semente' : nomeJornadaAtual}" />
+        <div class="content-surface mb-4" data-tour-id="painel-intro">
           	<h1 class="h3 mb-0">Um por todos &amp; todos por um.</h1>
 			<p class="mb-0" style="opacity:.9">Cada doação transforma histórias. Juntos, fazemos a generosidade chegar mais longe - de forma simples, justa e rápida.</p>
         </div>
 
         <c:if test="${!usuarioLogado.ativo}">
-          <c:if test="${sucessoUpload == true}">
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-              <strong>Seu comprovante foi enviado com sucesso!</strong> Nossa equipe está processando a solicitação.
-              <button type="button" class="close" data-dismiss="alert" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-              <strong>Dica:</strong> Após a ativação, acesse <b>Minha Contribuição</b> e realize a doação de R$ <c:choose><c:when test="${tipoCicloAtual != null}">${tipoCicloAtual.valorDoacao}</c:when><c:otherwise>90,00</c:otherwise></c:choose> para liberar a conta.
-              <button type="button" class="close" data-dismiss="alert" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
-            </div>
-          </c:if>
-
-          <c:if test="${sucessoUpload == false}">
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-              <strong>Erro ao enviar o arquivo!</strong> Tente novamente.
-              <button type="button" class="close" data-dismiss="alert" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
-            </div>
-          </c:if>
-
-          <!-- Bloco de ativação -->
-          <div class="card mb-4">
+          <div class="card mb-4" data-tour-id="painel-pendente">
             <div class="card-body">
-              <p class="mb-2"><b class="text-brand">Ativação pendente</b></p>
-              <p class="mb-3">Faça a doação de ativação de <b>R$ <c:choose><c:when test="${tipoCicloAtual != null}">${tipoCicloAtual.valorTI}</c:when><c:otherwise>10,00</c:otherwise></c:choose></b> para manutenção do sistema (T.I.) e, em seguida, a doação de <b>R$ <c:choose><c:when test="${tipoCicloAtual != null}">${tipoCicloAtual.valorDoacao}</c:when><c:otherwise>90,00</c:otherwise></c:choose></b> ao seu donatário.</p>
-              <hr/>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="mb-2"><b>PIX (telefone)</b></div>
-                  <p class="mb-1">Chave: <b>85997151515</b></p>
-                  <p class="mb-1">Valor: <b>R$ <c:choose><c:when test="${tipoCicloAtual != null}">${tipoCicloAtual.valorTI}</c:when><c:otherwise>10,00</c:otherwise></c:choose></b></p>
-                  <p class="mb-3">Descrição: <i>Doação inicial de ativação - T.I.</i></p>
+              <p class="mb-2"><b class="text-brand">Assinatura pendente</b></p>
+              <p class="mb-3">
+                Seu acesso ao portal está liberado, mas a ativação ainda depende da validação do comprovante.
+                Envie ou acompanhe seu comprovante em <b>Minha Contribuição</b>.
+              </p>
+              <c:if test="${not empty usuarioLogado.motivoRecusaAtivacao}">
+                <div class="alert alert-danger mb-3" role="alert">
+                  <strong>Comprovante recusado.</strong> ${usuarioLogado.motivoRecusaAtivacao}
                 </div>
-                <div class="col-md-6">
-                  <form:form method="post" action="/vemtambem/usuario/upload" enctype="multipart/form-data" class="d-flex align-items-end gap-2">
-                    <div class="form-group mr-2 mb-2">
-                      <label for="file"><b>Comprovante de pagamento</b></label><br/>
-                      <input id="file" type="file" name="file" class="form-control-file"/>
-                    </div>
-                    <button type="submit" class="btn btn-olive mb-2 px-4">Enviar Comprovante</button>
-                  </form:form>
-                </div>
-              </div>
+              </c:if>
+              <a href="/vemtambem/usuario/donatarios" class="btn btn-olive btn-sm px-3">
+                Ir para Minha Contribuição <i class="fas fa-arrow-right ml-1"></i>
+              </a>
             </div>
           </div>
         </c:if>
@@ -111,7 +80,7 @@
         <c:if test="${usuarioLogado.ativo}">
           <div class="row">
             <!-- Card Meu Ciclo -->
-            <div class="col-xl-4 col-md-6 mb-4">
+            <div class="col-xl-4 col-md-6 mb-4" data-tour-id="painel-progress">
               <div class="card h-100">
                 <div class="card-body">
                   <div class="d-flex align-items-center mb-3">
@@ -120,8 +89,8 @@
                       <h6 class="mb-0 font-weight-bold" style="color:var(--ink)">Meu Ciclo</h6>
                       <small class="text-muted">
                         <c:choose>
-                          <c:when test="${tipoCicloAtual != null}">${tipoCicloAtual.nome}</c:when>
-                          <c:otherwise>Tabuleiro 1</c:otherwise>
+                          <c:when test="${not empty jornadaAtual}">${jornadaAtual}</c:when>
+                          <c:otherwise>Jornada da Semente</c:otherwise>
                         </c:choose>
                       </small>
                     </div>
@@ -138,7 +107,7 @@
                   </div>
                   <c:choose>
                     <c:when test="${usuarioLogado.quantDoacoesRecebidas >= 8}">
-                      <small class="text-success-brand"><i class="fas fa-star mr-1"></i>Parabéns! Ciclo completo. Hora do próximo nível.</small>
+                      <small class="text-success-brand"><i class="fas fa-star mr-1"></i>Parabéns! Ciclo completo. Hora do próximo Nível.</small>
                     </c:when>
                     <c:when test="${usuarioLogado.quantDoacoesRecebidas >= 4}">
                       <small class="text-warn-brand"><i class="fas fa-fire mr-1"></i>${usuarioLogado.quantDoacoesRecebidas} de 8 — sua rede está crescendo</small>
@@ -155,7 +124,7 @@
             </div>
 
             <!-- Card Nível -->
-            <div class="col-xl-4 col-md-6 mb-4">
+            <div class="col-xl-4 col-md-6 mb-4" data-tour-id="painel-next-step">
               <div class="card h-100">
                 <div class="card-body">
                   <div class="d-flex align-items-center mb-3">
@@ -210,7 +179,7 @@
                         <c:choose>
                           <c:when test="${!usuarioLogado.doacaoFeita}">Realize sua doação</c:when>
                           <c:when test="${usuarioLogado.quantDoacoesRecebidas < 8}">Convide mais pessoas</c:when>
-                          <c:otherwise>Reativar para o próximo nível</c:otherwise>
+                          <c:otherwise>Reativar para o próximo Nível</c:otherwise>
                         </c:choose>
                       </small>
                     </div>
@@ -229,7 +198,7 @@
           </div>
 
           <!-- Copiar link de convite -->
-          <div class="card mb-4">
+          <div class="card mb-4" data-tour-id="painel-invite-link">
             <div class="card-body d-flex align-items-center justify-content-between flex-wrap">
               <div class="mr-3 mb-2">
                 <h6 class="mb-1 font-weight-bold" style="color:var(--ink)"><i class="fas fa-link mr-2 icon-olive"></i>Convide pessoas para sua rede</h6>
@@ -259,22 +228,8 @@
 <!-- Scroll Top -->
 <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
 
-<!-- Logout Modal -->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Sair</h5>
-        <button class="close" type="button" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">×</span></button>
-      </div>
-      <div class="modal-body">Deseja encerrar a sessão atual?</div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-        <a class="btn btn-primary" href="/vemtambem/sair">Sair</a>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- Global Modals -->
+<jsp:include page="/WEB-INF/includes/global-modals.jsp" />
 
 <!-- Session Timeout Modal -->
 <div class="modal fade" id="sessionTimeoutModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -367,5 +322,15 @@ function copiarLinkConvite() {
   };
 })();
 </script>
+<script type="text/javascript" src="<c:url value='/resources/vendor/introjs/intro.min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/vendor/lordicon/lordicon.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-core.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-icons.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-tour.js'/>"></script>
 </body>
 </html>
+
+
+
+
+

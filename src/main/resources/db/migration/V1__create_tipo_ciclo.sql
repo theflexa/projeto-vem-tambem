@@ -16,6 +16,6 @@ CREATE TABLE IF NOT EXISTS tipo_ciclo (
 -- Seed: Tabuleiros iniciais
 INSERT INTO tipo_ciclo (nome, valor_ti, valor_doacao, quant_doadores, ordem, ativo)
 VALUES
-  ('Tabuleiro 1', 10.00, 90.00, 8, 1, true),
-  ('Tabuleiro 2', 50.00, 450.00, 8, 2, true),
-  ('Tabuleiro 3', 100.00, 900.00, 8, 3, true);
+  ('Tabuleiro 1', 5.70, 60.00, 8, 1, true),
+  ('Tabuleiro 2', 42.75, 450.00, 8, 2, true),
+  ('Tabuleiro 3', 85.50, 900.00, 8, 3, true);

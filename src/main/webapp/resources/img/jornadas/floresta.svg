@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">Jornada da Floresta</title>
+  <desc id="desc">Paisagem de floresta densa representando fase avancada.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#b8d2b8"/>
+      <stop offset="100%" stop-color="#d9e9c5"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#517f44"/>
+      <stop offset="100%" stop-color="#2f5a2e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="620" fill="url(#sky)"/>
+  <path d="M0 372 C220 330 430 410 630 372 C825 334 1006 408 1200 366 L1200 620 L0 620 Z" fill="#6da160"/>
+  <path d="M0 430 C210 392 440 468 620 430 C830 388 998 468 1200 430 L1200 620 L0 620 Z" fill="url(#ground)"/>
+  <g fill="#315d2e">
+    <polygon points="120,460 205,275 290,460"/>
+    <polygon points="250,470 342,245 435,470"/>
+    <polygon points="420,455 500,255 580,455"/>
+    <polygon points="560,475 655,235 750,475"/>
+    <polygon points="720,462 805,248 890,462"/>
+    <polygon points="870,478 966,232 1062,478"/>
+    <polygon points="1015,458 1092,262 1170,458"/>
+  </g>
+  <g fill="#203f1f" opacity=".88">
+    <rect x="198" y="436" width="14" height="58"/>
+    <rect x="334" y="446" width="14" height="64"/>
+    <rect x="492" y="432" width="14" height="58"/>
+    <rect x="648" y="450" width="14" height="64"/>
+    <rect x="798" y="439" width="14" height="56"/>
+    <rect x="958" y="454" width="14" height="65"/>
+    <rect x="1083" y="440" width="14" height="58"/>
+  </g>
+  <text x="72" y="570" fill="#163314" font-size="58" font-family="Nunito, Arial, sans-serif" font-weight="800">
+    Jornada da Floresta
+  </text>
+</svg>

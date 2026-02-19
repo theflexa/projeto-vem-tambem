@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.vemtambem.model.Ciclo;
 import br.com.vemtambem.model.Conexao;
+import br.com.vemtambem.model.RedePosicaoPreview;
 import br.com.vemtambem.model.TipoChavePix;
 import br.com.vemtambem.model.Usuario;
 
@@ -156,6 +157,63 @@ public class CicloDAOImpl implements CicloDAO {
 		criteria.add(Restrictions.eq("ativo", true));
 
 		return (Ciclo) criteria.uniqueResult();
+	}
+
+	@Override
+	public RedePosicaoPreview pesquisarPosicaoUsuarioNaRede(Long idUsuario) {
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DriverManager.getConnection(Conexao.URL, Conexao.USUARIO, Conexao.SENHA);
+			String sql = "select c.nome as nome_ciclo, c.ativo, "
+					+ "case when c.indicado_esquerda_id = ? then 'Esquerda' else 'Direita' end as posicao "
+					+ "from ciclo c "
+					+ "where c.indicado_esquerda_id = ? or c.indicado_direita_id = ? "
+					+ "order by c.ativo desc, c.id desc "
+					+ "limit 1";
+
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setLong(1, idUsuario);
+			preparedStatement.setLong(2, idUsuario);
+			preparedStatement.setLong(3, idUsuario);
+
+			resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				RedePosicaoPreview preview = new RedePosicaoPreview();
+				preview.setNomeCiclo(resultSet.getString("nome_ciclo"));
+				preview.setPosicao(resultSet.getString("posicao"));
+				preview.setCicloAtivo(resultSet.getBoolean("ativo"));
+				return preview;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (resultSet != null) {
+					resultSet.close();
+				}
+				if (preparedStatement != null) {
+					preparedStatement.close();
+				}
+				if (connection != null) {
+					connection.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public int vincularTipoCicloPadraoEmCiclosSemTipo(Long idTipoCicloPadrao) {
+		return sessionFactory.getCurrentSession()
+				.createNativeQuery("UPDATE ciclo SET tipo_ciclo_id = :id WHERE tipo_ciclo_id IS NULL")
+				.setParameter("id", idTipoCicloPadrao)
+				.executeUpdate();
 	}
 
 }

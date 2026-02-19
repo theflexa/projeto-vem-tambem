@@ -29,6 +29,14 @@
   <link href="${sbadmin2mincss}" rel="stylesheet"/>
   <spring:url value="/resources/css/vt-theme.css" var="vtthemecss" />
   <link href="${vtthemecss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-layout.css" var="vtlayoutcss" />
+  <link href="${vtlayoutcss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-components.css" var="vtcomponentscss" />
+  <link href="${vtcomponentscss}" rel="stylesheet"/>
+  <spring:url value="/resources/css/vt-tour.css" var="vttourcss" />
+  <link href="${vttourcss}" rel="stylesheet"/>
+  <spring:url value="/resources/vendor/introjs/introjs.min.css" var="introcss" />
+  <link href="${introcss}" rel="stylesheet"/>
 
   <style>
     :root{
@@ -70,74 +78,16 @@
     .counter{font-size:.82rem; color:#6b7280}
   </style>
 </head>
-<body id="page-top">
+<body id="page-top" data-user-id="${usuarioLogado.id}">
 
 <div id="wrapper">
   <!-- Sidebar -->
-  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="${cp}/painel">
-      <div class="sidebar-brand-icon">
-        <img src="<c:url value='/resources/img/logo_vertical_2.png'/>" alt="Vem Também" style="height:85px">
-      </div>
-    </a>
-
-    <hr class="sidebar-divider my-0"/>
-
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/painel')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/painel"><i class="fas fa-home"></i><span>Painel</span></a>
-    </li>
-
-    <hr class="sidebar-divider"/>
-    <div class="sidebar-heading">Operação</div>
-
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/dados-pessoais')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/dados-pessoais"><i class="fas fa-user"></i><span>Meus Dados</span></a>
-    </li>
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/donatarios')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/donatarios"><i class="fas fa-hands-helping"></i><span>Donatários</span></a>
-    </li>
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/doadores')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/doadores"><i class="fas fa-donate"></i><span>Doadores</span></a>
-    </li>
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/usuario/minha-rede')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/usuario/minha-rede"><i class="fas fa-network-wired"></i><span>Minha Rede</span></a>
-    </li>
-    <li class="nav-item"><a class="nav-link" href="${cp}/sair"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a></li>
-
-    <hr class="sidebar-divider d-none d-md-block"/>
-    <div class="sidebar-heading">Atendimento</div>
-    <li class="nav-item ${fn:startsWith(uri, cp.concat('/suporte')) ? 'active' : ''}">
-      <a class="nav-link" href="${cp}/suporte/formulario"><i class="fas fa-headset"></i><span>Suporte</span></a>
-    </li>
-
-    <c:if test="${usuarioLogado.admin}">
-      <hr class="sidebar-divider d-none d-md-block"/>
-      <div class="sidebar-heading">Admin</div>
-      <li class="nav-item ${fn:startsWith(uri, cp.concat('/admin/listar-pendentes')) ? 'active' : ''}">
-        <a class="nav-link" href="${cp}/admin/listar-pendentes"><i class="fas fa-user-check"></i><span>Ativar Cadastrados</span></a>
-      </li>
-    </c:if>
-
-    <div class="text-center d-none d-md-inline">
-      <button class="rounded-circle border-0" id="sidebarToggle" aria-label="Alternar menu"></button>
-    </div>
-  </ul>
-  <!-- /Sidebar -->
+  <jsp:include page="/WEB-INF/includes/sidebar.jsp" />
 
   <!-- Content -->
   <div id="content-wrapper" class="d-flex flex-column">
     <div id="content">
-      <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow-sm">
-        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-2" aria-label="Abrir menu"><i class="fa fa-bars"></i></button>
-        <ul class="navbar-nav ml-auto">
-          <div class="topbar-divider d-none d-sm-block"></div>
-          <li class="nav-item dropdown no-arrow">
-            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="mr-2 d-sm-inline text-gray-700 small"><i class="fas fa-user-circle"></i> ${usuarioLogado.nome}</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+      <jsp:include page="/WEB-INF/includes/topbar.jsp" />
 
       <div class="container-fluid">
         <div class="content-surface mb-3">
@@ -207,22 +157,8 @@
 <!-- Scroll to Top -->
 <a class="scroll-to-top rounded" href="#page-top" aria-label="Voltar ao topo"><i class="fas fa-angle-up"></i></a>
 
-<!-- Logout Modal -->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutTitle" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="logoutTitle">Sair</h5>
-        <button class="close" type="button" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body">Deseja encerrar a sessão atual?</div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-        <a class="btn btn-primary" href="${cp}/sair">Sair</a>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- Global Modals -->
+<jsp:include page="/WEB-INF/includes/global-modals.jsp" />
 
 <!-- JS -->
 <script type="text/javascript" src="<c:url value='/resources/vendor/jquery/jquery.min.js'/>"></script>
@@ -248,5 +184,10 @@
     }
   })();
 </script>
+<script type="text/javascript" src="<c:url value='/resources/vendor/introjs/intro.min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/vendor/lordicon/lordicon.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-core.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-icons.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/vt-tour.js'/>"></script>
 </body>
 </html>

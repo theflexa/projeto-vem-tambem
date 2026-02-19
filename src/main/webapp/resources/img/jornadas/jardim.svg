@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">Jornada do Jardim</title>
+  <desc id="desc">Paisagem florida representando crescimento.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d8eff7"/>
+      <stop offset="100%" stop-color="#eaf7df"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#96c95f"/>
+      <stop offset="100%" stop-color="#5f9c30"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="620" fill="url(#sky)"/>
+  <circle cx="1020" cy="126" r="74" fill="#ffd766" opacity=".88"/>
+  <path d="M0 380 C240 350 430 430 640 385 C820 345 990 420 1200 378 L1200 620 L0 620 Z" fill="url(#grass)"/>
+  <path d="M120 470 C130 400 170 356 225 322 C280 358 321 401 332 470 Z" fill="#2f7a2d"/>
+  <path d="M372 490 C384 416 429 367 493 330 C556 368 603 417 614 490 Z" fill="#2f7a2d"/>
+  <path d="M690 478 C700 410 740 363 798 329 C855 364 899 411 909 478 Z" fill="#2f7a2d"/>
+  <path d="M940 492 C952 422 996 370 1060 334 C1125 372 1168 424 1180 492 Z" fill="#2f7a2d"/>
+  <g fill="#f15b7a">
+    <circle cx="245" cy="315" r="25"/><circle cx="525" cy="322" r="25"/><circle cx="823" cy="320" r="25"/><circle cx="1062" cy="326" r="25"/>
+  </g>
+  <g fill="#ffd166">
+    <circle cx="210" cy="298" r="18"/><circle cx="490" cy="305" r="18"/><circle cx="790" cy="303" r="18"/><circle cx="1030" cy="309" r="18"/>
+  </g>
+  <text x="72" y="570" fill="#224018" font-size="58" font-family="Nunito, Arial, sans-serif" font-weight="800">
+    Jornada do Jardim
+  </text>
+</svg>

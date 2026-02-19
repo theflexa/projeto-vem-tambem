@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">Jornada da Semente</title>
+  <desc id="desc">Paisagem com solo fertil e broto inicial.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d8ead3"/>
+      <stop offset="100%" stop-color="#f6f8e4"/>
+    </linearGradient>
+    <linearGradient id="soil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8a5f2d"/>
+      <stop offset="100%" stop-color="#5c3b18"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="620" fill="url(#sky)"/>
+  <circle cx="160" cy="120" r="72" fill="#f3cf56" opacity=".9"/>
+  <path d="M0 390 C210 340 420 420 600 385 C780 350 940 410 1200 370 L1200 620 L0 620 Z" fill="#c5dc9a"/>
+  <path d="M0 430 C240 390 420 470 620 430 C790 395 1020 470 1200 440 L1200 620 L0 620 Z" fill="url(#soil)"/>
+  <ellipse cx="610" cy="430" rx="84" ry="34" fill="#3f2a12" opacity=".34"/>
+  <path d="M600 430 C602 395 605 362 614 334" stroke="#4b7c1f" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M614 366 C650 362 682 335 694 306 C652 305 623 330 614 366 Z" fill="#79ab3d"/>
+  <path d="M611 378 C573 372 543 342 532 311 C572 311 603 335 611 378 Z" fill="#8fc153"/>
+  <path d="M560 462 C566 430 585 406 610 393 C634 406 654 429 659 462 Z" fill="#2f5d12"/>
+  <text x="70" y="570" fill="#2f3a07" font-size="58" font-family="Nunito, Arial, sans-serif" font-weight="800">
+    Jornada da Semente
+  </text>
+</svg>

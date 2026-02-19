@@ -64,48 +64,46 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	/**
-	 * Adiciona o novo usuário a arvore e retorna a pessoa que ele foi inserido.
+	 * Adiciona o novo usuÃ¡rio a arvore e retorna a pessoa que ele foi inserido.
 	 * 
 	 * @param indicador
 	 * @param novaPessoa
 	 */
 	public Usuario inserirIndicado(Usuario indicador, Usuario novaPessoa) {
 
-		Usuario usuario = new Usuario();
+		if (indicador == null || indicador.getId() == null || novaPessoa == null || novaPessoa.getId() == null) {
+			return null;
+		}
+		if (indicador.getId().equals(novaPessoa.getId())) {
+			return null;
+		}
 
-		if (indicador.getId() != novaPessoa.getId()) {
-			Queue<Usuario> fila = new LinkedList<>();
-			fila.add(indicador);
+		Usuario usuario = null;
+		Queue<Usuario> fila = new LinkedList<>();
+		fila.add(indicador);
 
-			while (!fila.isEmpty()) {
-				Usuario pessoaAtual = fila.poll();
+		while (!fila.isEmpty()) {
+			Usuario pessoaAtual = fila.poll();
 
-				if (pessoaAtual.getIndicadoEsquerda() == null) {
-					// A posição da esquerda está vazia, insira a nova pessoa aqui.
-					pessoaAtual.setIndicadoEsquerda(novaPessoa);
-					usuario = pessoaAtual;
-					break; // Importante: encerrar a busca assim que encontrar a posição vazia.
+			if (pessoaAtual.getIndicadoEsquerda() == null) {
+				pessoaAtual.setIndicadoEsquerda(novaPessoa);
+				usuario = pessoaAtual;
+				break;
+			} else if (pessoaAtual.getIndicadoDireita() == null) {
+				pessoaAtual.setIndicadoDireita(novaPessoa);
+				usuario = pessoaAtual;
+				break;
+			}
 
-				} else if (pessoaAtual.getIndicadoDireita() == null) {
-					// A posição da direita está vazia, insira a nova pessoa aqui.
-					pessoaAtual.setIndicadoDireita(novaPessoa);
-					usuario = pessoaAtual;
-					break; // Importante: encerrar a busca assim que encontrar a posição vazia.
-
-				}
-
-				// Adicionar os indicados à fila para continuar a busca.
-				if (pessoaAtual.getIndicadoEsquerda() != null) {
-					fila.add(pessoaAtual.getIndicadoEsquerda());
-				}
-				if (pessoaAtual.getIndicadoDireita() != null) {
-					fila.add(pessoaAtual.getIndicadoDireita());
-				}
+			if (pessoaAtual.getIndicadoEsquerda() != null) {
+				fila.add(pessoaAtual.getIndicadoEsquerda());
+			}
+			if (pessoaAtual.getIndicadoDireita() != null) {
+				fila.add(pessoaAtual.getIndicadoDireita());
 			}
 		}
 		return usuario;
 	}
-
 	@Override
 	@Transactional
 	public void atualizarDados(Usuario pessoa) {
@@ -178,48 +176,61 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Transactional
 	public void ativar(Long idUsuario) {
 
-		// usuário que está sendo ativado
 		Usuario usuario = usuarioDAO.pesquisarPorId(idUsuario);
+		if (usuario == null) {
+			return;
+		}
+
 		usuario.setAtivo(true);
 		usuario.setMotivoRecusaAtivacao(null);
 		usuario.setQuantCiclos(usuario.getQuantCiclos() + 1);
 
+		Usuario indicador = usuario.getIndicador();
+		if (indicador == null || indicador.getId() == null) {
+			indicador = usuarioDAO.pesquisarPorLogin("admin");
+			if (indicador == null) {
+				indicador = usuarioDAO.pesquisarPorLogin("vemtambem");
+			}
+			usuario.setIndicador(indicador);
+		}
+
 		Usuario indicadorDireto = null;
 		if ("vemtambem".equalsIgnoreCase(usuario.getLogin())) {
-
-			// inserir o novo usuário à árvore do indicador
-			indicadorDireto = this.inserirIndicado(usuario.getIndicador(), usuario);
+			indicadorDireto = this.inserirIndicado(indicador, usuario);
 			usuarioDAO.salvar(usuario);
 		} else {
-			// pegar o ciclo ativo do usuário indicador, para passar o id atualizado
-			Ciclo cicloAtivoIndicador = cicloDAO
-					.getCicloAtivoPorLogin(usuario.getIndicador().getCicloAtivo().getLogin());
+			Usuario baseArvore = indicador;
+			if (indicador != null && indicador.getCicloAtivo() != null
+					&& indicador.getCicloAtivo().getLogin() != null) {
+				Ciclo cicloAtivoIndicador = cicloDAO.getCicloAtivoPorLogin(indicador.getCicloAtivo().getLogin());
+				if (cicloAtivoIndicador != null && cicloAtivoIndicador.getUsuario() != null) {
+					baseArvore = cicloAtivoIndicador.getUsuario();
+				}
+			}
 
-			// inserir o novo usuário à árvore do indicador
-			indicadorDireto = this.inserirIndicado(cicloAtivoIndicador.getUsuario(), usuario);
+			indicadorDireto = this.inserirIndicado(baseArvore, usuario);
 			usuarioDAO.salvar(usuario);
 		}
 
-		// atualizar o ciclo do indicador colocando o novo usuário
-		Ciclo cicloIndicador = cicloDAO.pesquisarCicloAtivoIdUsuario(indicadorDireto.getId());
-		if (cicloIndicador != null) {
-			if (cicloIndicador.getIndicadoEsquerda() == null)
-				cicloIndicador.setIndicadoEsquerda(usuario);
-			else if (cicloIndicador.getIndicadoDireita() == null)
-				cicloIndicador.setIndicadoDireita(usuario);
-			cicloDAO.salvar(cicloIndicador);
+		if (indicadorDireto != null && indicadorDireto.getId() != null) {
+			Ciclo cicloIndicador = cicloDAO.pesquisarCicloAtivoIdUsuario(indicadorDireto.getId());
+			if (cicloIndicador != null) {
+				if (cicloIndicador.getIndicadoEsquerda() == null)
+					cicloIndicador.setIndicadoEsquerda(usuario);
+				else if (cicloIndicador.getIndicadoDireita() == null)
+					cicloIndicador.setIndicadoDireita(usuario);
+				cicloDAO.salvar(cicloIndicador);
+			}
 		}
 
-		// Criar o ciclo do novo usuário
 		Ciclo ciclo = new Ciclo();
 		ciclo.setIndicador(usuario.getIndicador());
 		ciclo.setAtivo(true);
 		ciclo.setNome("CICLO " + usuario.getQuantCiclos());
 		ciclo.setUsuario(usuario);
-		ciclo.setIndicadoPrincipal(indicadorDireto);
+		ciclo.setIndicadoPrincipal(indicadorDireto != null ? indicadorDireto : indicador);
 		ciclo.setLogin(usuario.getLogin());
 
-		// Associar o primeiro TipoCiclo ativo (ordem 1)
 		TipoCiclo tipoCiclo = tipoCicloDAO.pesquisarPorOrdem(1);
 		if (tipoCiclo != null) {
 			ciclo.setTipoCiclo(tipoCiclo);
@@ -230,7 +241,6 @@ public class UsuarioServiceImpl implements UsuarioService {
 		usuario.setCicloAtivo(ciclo);
 		usuarioDAO.salvar(usuario);
 	}
-
 	@Override
 	@Transactional
 	public void recusarAtivacao(Long idUsuario, String motivoRecusa) {
@@ -353,7 +363,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	/**
-	 * Pesquisa de usuário
+	 * Pesquisa de usuÃ¡rio
 	 * 
 	 * O objeto carrega o: id, quantDoacoesRecebidas e login
 	 * 
@@ -406,3 +416,4 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 }
+

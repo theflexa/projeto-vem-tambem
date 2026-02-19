@@ -8,8 +8,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -186,7 +188,7 @@ public class AdminController {
 	private ModelAndView carregarAdministracao(ModelAndView model, Boolean sucesso, String mensagem,
 			Usuario usuarioLogado) {
 		tipoCicloService.garantirJornadasPadraoEVinculoCiclos();
-		List<TipoCiclo> tiposCiclo = tipoCicloService.listarTodosOrdenados();
+		List<TipoCiclo> tiposCiclo = consolidarTiposCiclo(tipoCicloService.listarTodosOrdenados());
 		normalizarNomesTipoCiclo(tiposCiclo);
 		model.addObject("usuarioLogado", usuarioLogado);
 		model.addObject("tiposCiclo", tiposCiclo);
@@ -221,10 +223,14 @@ public class AdminController {
 					+ "ORDER BY tc.ordem";
 			try (PreparedStatement ps = connection.prepareStatement(sqlCiclosPorTipo);
 					ResultSet rs = ps.executeQuery()) {
+				Map<String, Long> totaisPorJornada = new LinkedHashMap<>();
 				while (rs.next()) {
 					String nome = mapearNomeJornada(rs.getString("nome"));
 					long total = rs.getLong("total");
-					snapshot.ciclosPorTipo.add(new DashboardSerieItem(nome, total));
+					totaisPorJornada.merge(nome, total, Long::sum);
+				}
+				for (Map.Entry<String, Long> item : totaisPorJornada.entrySet()) {
+					snapshot.ciclosPorTipo.add(new DashboardSerieItem(item.getKey(), item.getValue()));
 				}
 			}
 		} catch (SQLException e) {
@@ -276,6 +282,38 @@ public class AdminController {
 			}
 			tipoCiclo.setNome(mapearNomeJornada(tipoCiclo.getNome()));
 		}
+	}
+
+	private List<TipoCiclo> consolidarTiposCiclo(List<TipoCiclo> tiposCiclo) {
+		if (tiposCiclo == null || tiposCiclo.isEmpty()) {
+			return new ArrayList<>();
+		}
+
+		Map<Integer, TipoCiclo> tiposCicloPorOrdem = new LinkedHashMap<>();
+		for (TipoCiclo tipoCiclo : tiposCiclo) {
+			if (tipoCiclo == null) {
+				continue;
+			}
+
+			int ordem = tipoCiclo.getOrdem();
+			TipoCiclo existente = tiposCicloPorOrdem.get(ordem);
+			if (existente == null) {
+				tiposCicloPorOrdem.put(ordem, tipoCiclo);
+				continue;
+			}
+
+			boolean substituirPorAtivo = !existente.isAtivo() && tipoCiclo.isAtivo();
+			boolean substituirPorMaisRecente = existente.getId() != null
+					&& tipoCiclo.getId() != null
+					&& tipoCiclo.getId() > existente.getId()
+					&& existente.isAtivo() == tipoCiclo.isAtivo();
+
+			if (substituirPorAtivo || substituirPorMaisRecente) {
+				tiposCicloPorOrdem.put(ordem, tipoCiclo);
+			}
+		}
+
+		return new ArrayList<>(tiposCicloPorOrdem.values());
 	}
 
 	private String mapearNomeJornada(String nomeOriginal) {
